@@ -1,128 +1,253 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}Nouvelle période - {{ parent() }}{% endblock %}
+{% block title %}Nouvelle période - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Nouvelle Période 📅</h1>
+    <p class="page-subtitle">
+        Créer une nouvelle période budgétaire pour organiser vos finances
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_period_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux périodes
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4><i class="bi bi-calendar-plus"></i> Créer une nouvelle période</h4>
-                </div>
-                <div class="card-body">
-                    {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
-                        <div class="col-12">
-                            {{ form_row(form.name, {
-                                'attr': {'class': 'form-control'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-                        
-                        <div class="col-md-6">
-                            {{ form_row(form.startDate, {
-                                'attr': {'class': 'form-control'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-                        
-                        <div class="col-md-6">
-                            {{ form_row(form.endDate, {
-                                'attr': {'class': 'form-control'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i>
-                                <strong>Conseil :</strong> Choisissez une période cohérente (par exemple un mois, un trimestre) pour mieux organiser votre budget.
-                            </div>
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-plus-circle"></i> Créer la période
-                                </button>
-                                <a href="{{ path('app_period_index') }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left"></i> Retour à la liste
-                                </a>
-                            </div>
-                        </div>
-                    {{ form_end(form) }}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-plus-circle me-2"></i>Créer une période
+                </h3>
+                <div class="d-flex align-items-center">
+                    <span class="badge-modern" style="background: var(--primary-gradient); color: white;">
+                        <i class="bi bi-calendar3 me-1"></i>Nouvelle période
+                    </span>
                 </div>
             </div>
-            
-            {# Suggestions de périodes courantes #}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h6><i class="bi bi-lightbulb"></i> Suggestions de périodes</h6>
+
+            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                <div class="form-group-modern">
+                    {{ form_row(form.name, {
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Janvier 2024, Trimestre 1, Budget Vacances...'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100 period-suggestion" 
-                                    data-name="Janvier {{ 'now'|date('Y') }}" 
-                                    data-start="{{ 'first day of this month'|date('Y-m-d') }}" 
-                                    data-end="{{ 'last day of this month'|date('Y-m-d') }}">
-                                <i class="bi bi-calendar-month"></i> Mois actuel
-                            </button>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.startDate, {
+                                'attr': {'class': 'form-control-modern'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
                         </div>
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100 period-suggestion" 
-                                    data-name="Trimestre {{ 'now'|date('Y') }}" 
-                                    data-start="{{ 'first day of january this year'|date('Y-m-d') }}" 
-                                    data-end="{{ 'last day of march this year'|date('Y-m-d') }}">
-                                <i class="bi bi-calendar3"></i> Trimestre actuel
-                            </button>
-                        </div>
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-info btn-sm mb-2 w-100 period-suggestion" 
-                                    data-name="Mois prochain" 
-                                    data-start="{{ 'first day of next month'|date('Y-m-d') }}" 
-                                    data-end="{{ 'last day of next month'|date('Y-m-d') }}">
-                                <i class="bi bi-arrow-right-circle"></i> Mois prochain
-                            </button>
-                        </div>
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-secondary btn-sm mb-2 w-100 period-suggestion" 
-                                    data-name="Année {{ 'now'|date('Y') }}" 
-                                    data-start="{{ 'first day of january this year'|date('Y-m-d') }}" 
-                                    data-end="{{ 'last day of december this year'|date('Y-m-d') }}">
-                                <i class="bi bi-calendar4-range"></i> Année complète
-                            </button>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.endDate, {
+                                'attr': {'class': 'form-control-modern'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
                         </div>
                     </div>
                 </div>
+                
+                <div class="alert" style="background: rgba(79, 172, 254, 0.1); color: #4facfe; border: 1px solid rgba(79, 172, 254, 0.2); border-radius: 12px; padding: 1rem;">
+                    <i class="bi bi-lightbulb me-2"></i>
+                    <strong>Conseil :</strong> Choisissez une période cohérente (mois, trimestre) pour mieux organiser votre budget.
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{{ path('app_period_index') }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                        <i class="bi bi-x me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn-modern btn-primary-modern">
+                        <i class="bi bi-check-circle me-2"></i>Créer la période
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        
+        <!-- Suggestions de périodes -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-magic me-2"></i>Suggestions rapides
+                </h3>
+            </div>
+            
+            <div class="suggestions-grid-period">
+                <button type="button" class="suggestion-period" 
+                        data-name="Janvier {{ 'now'|date('Y') }}" 
+                        data-start="{{ 'first day of this month'|date('Y-m-d') }}" 
+                        data-end="{{ 'last day of this month'|date('Y-m-d') }}">
+                    <i class="bi bi-calendar-month"></i>
+                    <div>
+                        <div class="suggestion-title">Mois actuel</div>
+                        <div class="suggestion-subtitle">{{ 'now'|date('F Y') }}</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-period" 
+                        data-name="Mois prochain" 
+                        data-start="{{ 'first day of next month'|date('Y-m-d') }}" 
+                        data-end="{{ 'last day of next month'|date('Y-m-d') }}">
+                    <i class="bi bi-arrow-right-circle"></i>
+                    <div>
+                        <div class="suggestion-title">Mois prochain</div>
+                        <div class="suggestion-subtitle">{{ '+1 month'|date('F Y') }}</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-period" 
+                        data-name="Trimestre {{ 'now'|date('Y') }}" 
+                        data-start="{{ 'first day of january this year'|date('Y-m-d') }}" 
+                        data-end="{{ 'last day of march this year'|date('Y-m-d') }}">
+                    <i class="bi bi-calendar3"></i>
+                    <div>
+                        <div class="suggestion-title">Trimestre actuel</div>
+                        <div class="suggestion-subtitle">Q{{ (('now'|date('n') - 1) / 3)|round(0, 'floor') + 1 }} {{ 'now'|date('Y') }}</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-period" 
+                        data-name="Année {{ 'now'|date('Y') }}" 
+                        data-start="{{ 'first day of january this year'|date('Y-m-d') }}" 
+                        data-end="{{ 'last day of december this year'|date('Y-m-d') }}">
+                    <i class="bi bi-calendar4-range"></i>
+                    <div>
+                        <div class="suggestion-title">Année complète</div>
+                        <div class="suggestion-subtitle">{{ 'now'|date('Y') }}</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-period" 
+                        data-name="Budget Vacances" 
+                        data-start="{{ 'first day of july this year'|date('Y-m-d') }}" 
+                        data-end="{{ 'last day of august this year'|date('Y-m-d') }}">
+                    <i class="bi bi-airplane"></i>
+                    <div>
+                        <div class="suggestion-title">Budget Vacances</div>
+                        <div class="suggestion-subtitle">Juillet-Août</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-period" 
+                        data-name="Budget Noël" 
+                        data-start="{{ 'first day of december this year'|date('Y-m-d') }}" 
+                        data-end="{{ 'last day of december this year'|date('Y-m-d') }}">
+                    <i class="bi bi-gift"></i>
+                    <div>
+                        <div class="suggestion-title">Budget Noël</div>
+                        <div class="suggestion-subtitle">Décembre</div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
+{% block extra_styles %}
+.suggestions-grid-period {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.suggestion-period {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(79, 172, 254, 0.05);
+    color: #4facfe;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.suggestion-period:hover {
+    background: rgba(79, 172, 254, 0.1);
+    border-color: rgba(79, 172, 254, 0.3);
+    transform: translateY(-2px);
+}
+
+.suggestion-period.selected {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: #4facfe;
+}
+
+.suggestion-period i {
+    font-size: 1.5rem;
+    min-width: 24px;
+}
+
+.suggestion-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .suggestions-grid-period {
+        grid-template-columns: 1fr;
+    }
+    
+    .suggestion-period {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    
+    .suggestion-period i {
+        font-size: 1.25rem;
+    }
+}
+{% endblock %}
+
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Gestion des suggestions de périodes
-    document.querySelectorAll('.period-suggestion').forEach(button => {
+    document.querySelectorAll('.suggestion-period').forEach(button => {
         button.addEventListener('click', function() {
             const name = this.dataset.name;
             const startDate = this.dataset.start;
             const endDate = this.dataset.end;
             
             // Remplir les champs du formulaire
-            document.getElementById('period_name').value = name;
-            document.getElementById('period_startDate').value = startDate;
-            document.getElementById('period_endDate').value = endDate;
+            const nameField = document.getElementById('period_name');
+            const startDateField = document.getElementById('period_startDate');
+            const endDateField = document.getElementById('period_endDate');
             
-            // Effet visuel de sélection
-            document.querySelectorAll('.period-suggestion').forEach(btn => {
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-outline-primary');
+            if (nameField) nameField.value = name;
+            if (startDateField) startDateField.value = startDate;
+            if (endDateField) endDateField.value = endDate;
+            
+            // Animation de sélection
+            document.querySelectorAll('.suggestion-period').forEach(btn => {
+                btn.classList.remove('selected');
             });
-            this.classList.remove('btn-outline-primary');
-            this.classList.add('btn-primary');
+            this.classList.add('selected');
+            
+            // Animation de succès
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-2px)';
+            }, 150);
         });
     });
     
@@ -131,20 +256,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const endDateInput = document.getElementById('period_endDate');
     
     function validateDates() {
-        if (startDateInput.value && endDateInput.value) {
+        if (startDateInput && endDateInput && startDateInput.value && endDateInput.value) {
             const startDate = new Date(startDateInput.value);
             const endDate = new Date(endDateInput.value);
             
             if (endDate <= startDate) {
                 endDateInput.setCustomValidity('La date de fin doit être postérieure à la date de début');
+                endDateInput.style.borderColor = '#dc3545';
             } else {
                 endDateInput.setCustomValidity('');
+                endDateInput.style.borderColor = '';
             }
         }
     }
     
-    startDateInput.addEventListener('change', validateDates);
-    endDateInput.addEventListener('change', validateDates);
+    if (startDateInput) startDateInput.addEventListener('change', validateDates);
+    if (endDateInput) endDateInput.addEventListener('change', validateDates);
+    
+    // Animation au focus des champs de formulaire
+    document.querySelectorAll('.form-control-modern').forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
 });
 </script>
 {% endblock %} 

@@ -1,221 +1,272 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}{{ period.name }} - {{ parent() }}{% endblock %}
+{% block title %}{{ period.name }} - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">{{ period.name }} 📅</h1>
+    <p class="page-subtitle">
+        Du {{ period.startDate|date('d/m/Y') }} au {{ period.endDate|date('d/m/Y') }}
+        {% set diff = period.endDate.diff(period.startDate) %}
+        ({{ diff.days + 1 }} jour{{ diff.days > 0 ? 's' : '' }})
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_period_edit', {id: period.id}) }}" class="btn-modern btn-warning-modern">
+            <i class="bi bi-pencil"></i>Modifier
+        </a>
+        <a href="{{ path('app_period_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux périodes
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-{# En-tête de la période #}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1><i class="bi bi-calendar-check"></i> {{ period.name }}</h1>
-        <p class="text-muted mb-0">
-            Du {{ period.startDate|date('d/m/Y') }} au {{ period.endDate|date('d/m/Y') }}
-            {% set diff = period.endDate.diff(period.startDate) %}
-            ({{ diff.days + 1 }} jour{{ diff.days > 0 ? 's' : '' }})
-        </p>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{{ path('app_period_edit', {id: period.id}) }}" class="btn btn-outline-secondary">
-            <i class="bi bi-pencil"></i> Modifier
-        </a>
-        <a href="{{ path('app_period_index') }}" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-left"></i> Retour à la liste
-        </a>
-    </div>
-</div>
-
-{# Statistiques de la période #}
+<!-- Statistiques principales -->
 <div class="row mb-4">
     <div class="col-md-4">
-        <div class="card card-income">
-            <div class="card-body text-center">
-                <h3>{{ period.totalIncome|number_format(2, ',', ' ') }}€</h3>
-                <p class="mb-0">Revenus totaux</p>
-                <small>{{ period.incomes|length }} entrée{{ period.incomes|length > 1 ? 's' : '' }}</small>
+        <div class="stat-card-main success">
+            <div class="stat-header">
+                <i class="bi bi-arrow-up-circle"></i>
+                <span class="stat-title">Revenus totaux</span>
             </div>
+            <div class="stat-value">{{ period.totalIncome|number_format(0, ',', ' ') }}€</div>
+            <div class="stat-detail">{{ period.incomes|length }} entrée{{ period.incomes|length > 1 ? 's' : '' }}</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card card-expense">
-            <div class="card-body text-center">
-                <h3>{{ period.totalExpenses|number_format(2, ',', ' ') }}€</h3>
-                <p class="mb-0">Dépenses totales</p>
-                <small>{{ period.expenses|length }} sortie{{ period.expenses|length > 1 ? 's' : '' }}</small>
+        <div class="stat-card-main danger">
+            <div class="stat-header">
+                <i class="bi bi-arrow-down-circle"></i>
+                <span class="stat-title">Dépenses totales</span>
             </div>
+            <div class="stat-value">{{ period.totalExpenses|number_format(0, ',', ' ') }}€</div>
+            <div class="stat-detail">{{ period.expenses|length }} sortie{{ period.expenses|length > 1 ? 's' : '' }}</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card {% if period.balance >= 0 %}card-income{% else %}card-expense{% endif %}">
-            <div class="card-body text-center">
-                <h3>{{ period.balance|number_format(2, ',', ' ') }}€</h3>
-                <p class="mb-0">Solde</p>
-                <small>
-                    {% if period.balance >= 0 %}
-                        <i class="bi bi-emoji-smile"></i> Équilibre positif
-                    {% else %}
-                        <i class="bi bi-emoji-frown"></i> Déficit
-                    {% endif %}
-                </small>
+        <div class="stat-card-main {{ period.balance >= 0 ? 'success' : 'danger' }}">
+            <div class="stat-header">
+                <i class="bi bi-{{ period.balance >= 0 ? 'plus' : 'dash' }}-circle"></i>
+                <span class="stat-title">Solde</span>
+            </div>
+            <div class="stat-value">{{ period.balance|number_format(0, ',', ' ') }}€</div>
+            <div class="stat-detail">
+                {% if period.balance >= 0 %}
+                    <i class="bi bi-emoji-smile"></i> Équilibre positif
+                {% else %}
+                    <i class="bi bi-emoji-frown"></i> Déficit
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-{# Actions rapides #}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-lightning"></i> Actions rapides</h5>
+<!-- Actions rapides -->
+<div class="modern-card mb-4">
+    <div class="card-header-modern">
+        <h3 class="card-title-modern">
+            <i class="bi bi-lightning me-2"></i>Actions rapides
+        </h3>
+    </div>
+    
+    <div class="quick-actions">
+        <a href="{{ path('app_income_new', {period: period.id}) }}" class="quick-action success">
+            <i class="bi bi-plus-circle"></i>
+            <div>
+                <div class="action-title">Ajouter un revenu</div>
+                <div class="action-subtitle">Nouvelle entrée d'argent</div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 col-lg-3 mb-2">
-                        <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn btn-outline-success w-100">
-                            <i class="bi bi-plus-square"></i> Ajouter un revenu
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-2">
-                        <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn btn-outline-danger w-100">
-                            <i class="bi bi-dash-square"></i> Ajouter une dépense
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-2">
-                        <a href="{{ path('app_category_index') }}" class="btn btn-outline-info w-100">
-                            <i class="bi bi-tags"></i> Gérer les catégories
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-2">
-                        <button class="btn btn-outline-warning w-100" disabled>
-                            <i class="bi bi-file-earmark-text"></i> Exporter
-                        </button>
-                    </div>
-                </div>
-                <small class="text-muted">
-                    <i class="bi bi-info-circle"></i> 
-                    Gérez facilement vos finances avec les actions rapides ci-dessus.
-                </small>
+        </a>
+        
+        <a href="{{ path('app_expense_new', {period: period.id}) }}" class="quick-action danger">
+            <i class="bi bi-dash-circle"></i>
+            <div>
+                <div class="action-title">Ajouter une dépense</div>
+                <div class="action-subtitle">Nouvelle sortie d'argent</div>
             </div>
-        </div>
+        </a>
+        
+        <a href="{{ path('app_category_index') }}" class="quick-action info">
+            <i class="bi bi-tags"></i>
+            <div>
+                <div class="action-title">Gérer les catégories</div>
+                <div class="action-subtitle">Organiser vos types</div>
+            </div>
+        </a>
+        
+        <button class="quick-action warning" onclick="alert('Fonctionnalité à venir')">
+            <i class="bi bi-download"></i>
+            <div>
+                <div class="action-title">Exporter</div>
+                <div class="action-subtitle">Télécharger les données</div>
+            </div>
+        </button>
     </div>
 </div>
 
-{# Revenus et dépenses #}
+<!-- Revenus et dépenses -->
 <div class="row">
-    {# Revenus #}
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Revenus</h5>
-                <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn btn-light btn-sm">
-                    <i class="bi bi-plus"></i> Nouveau
-                </a>
+    <!-- Revenus -->
+    <div class="col-lg-6 mb-4">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-arrow-up-circle text-success me-2"></i>Revenus
+                </h3>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_income_new', {period: period.id}) }}" 
+                       class="btn btn-sm btn-outline-success" style="border-radius: 8px;">
+                        <i class="bi bi-plus"></i>Nouveau
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                {% if period.incomes|length > 0 %}
-                    <div class="list-group list-group-flush">
-                        {% for income in period.incomes %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center position-relative">
-                            <div>
-                                <a href="{{ path('app_income_show', {id: income.id}) }}" class="text-decoration-none stretched-link">
-                                    <strong>{{ income.description }}</strong>
-                                </a>
-                                <br>
-                                <small class="text-muted">{{ income.date|date('d/m/Y') }}</small>
+            
+            {% if period.incomes|length > 0 %}
+                <div class="transaction-list">
+                    {% for income in period.incomes|slice(0, 10) %}
+                    <div class="transaction-item success">
+                        <div class="transaction-content">
+                            <a href="{{ path('app_income_show', {id: income.id}) }}" class="transaction-link">
+                                <strong>{{ income.description }}</strong>
+                            </a>
+                            <div class="transaction-details">
+                                <span class="transaction-date">{{ income.date|date('d/m/Y') }}</span>
                                 {% if income.category %}
-                                    <span class="badge bg-success ms-1">{{ income.category.name }}</span>
+                                    <span class="badge-modern" style="background: rgba(67, 233, 123, 0.1); color: #43e97b;">
+                                        {{ income.category.name }}
+                                    </span>
                                 {% endif %}
                             </div>
-                            <span class="text-success fw-bold">+{{ income.amount|number_format(2, ',', ' ') }}€</span>
                         </div>
-                        {% endfor %}
+                        <span class="transaction-amount success">+{{ income.amount|number_format(0, ',', ' ') }}€</span>
                     </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="bi bi-inbox fs-1 text-muted"></i>
-                        <p class="text-muted mt-2">Aucun revenu enregistré</p>
-                        <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn btn-outline-success">
-                            <i class="bi bi-plus"></i> Ajouter le premier revenu
-                        </a>
+                    {% endfor %}
+                    
+                    {% if period.incomes|length > 10 %}
+                    <div class="text-center py-3">
+                        <small class="text-muted">{{ period.incomes|length - 10 }} revenus supplémentaires...</small>
                     </div>
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-wallet display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">Aucun revenu</h4>
+                    <p class="text-muted">Commencez par ajouter vos sources de revenus.</p>
+                    <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn-modern btn-success-modern">
+                        <i class="bi bi-plus-circle"></i>Premier revenu
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-    {# Dépenses #}
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-arrow-down-circle"></i> Dépenses</h5>
-                <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn btn-light btn-sm">
-                    <i class="bi bi-plus"></i> Nouvelle
-                </a>
+    <!-- Dépenses -->
+    <div class="col-lg-6 mb-4">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-arrow-down-circle text-danger me-2"></i>Dépenses
+                </h3>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_expense_new', {period: period.id}) }}" 
+                       class="btn btn-sm btn-outline-danger" style="border-radius: 8px;">
+                        <i class="bi bi-plus"></i>Nouvelle
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                {% if period.expenses|length > 0 %}
-                    <div class="list-group list-group-flush">
-                        {% for expense in period.expenses %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center position-relative">
-                            <div>
-                                <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="text-decoration-none stretched-link">
-                                    <strong>{{ expense.description }}</strong>
-                                </a>
-                                <br>
-                                <small class="text-muted">{{ expense.date|date('d/m/Y') }}</small>
+            
+            {% if period.expenses|length > 0 %}
+                <div class="transaction-list">
+                    {% for expense in period.expenses|slice(0, 10) %}
+                    <div class="transaction-item danger">
+                        <div class="transaction-content">
+                            <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="transaction-link">
+                                <strong>{{ expense.description }}</strong>
+                            </a>
+                            <div class="transaction-details">
+                                <span class="transaction-date">{{ expense.date|date('d/m/Y') }}</span>
                                 {% if expense.category %}
-                                    <span class="badge bg-danger ms-1">{{ expense.category.name }}</span>
+                                    <span class="badge-modern" style="background: rgba(240, 147, 251, 0.1); color: #f093fb;">
+                                        {{ expense.category.name }}
+                                    </span>
                                 {% endif %}
                             </div>
-                            <span class="text-danger fw-bold">-{{ expense.amount|number_format(2, ',', ' ') }}€</span>
                         </div>
-                        {% endfor %}
+                        <span class="transaction-amount danger">-{{ expense.amount|number_format(0, ',', ' ') }}€</span>
                     </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="bi bi-inbox fs-1 text-muted"></i>
-                        <p class="text-muted mt-2">Aucune dépense enregistrée</p>
-                        <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn btn-outline-danger">
-                            <i class="bi bi-plus"></i> Ajouter la première dépense
-                        </a>
+                    {% endfor %}
+                    
+                    {% if period.expenses|length > 10 %}
+                    <div class="text-center py-3">
+                        <small class="text-muted">{{ period.expenses|length - 10 }} dépenses supplémentaires...</small>
                     </div>
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-credit-card display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">Aucune dépense</h4>
+                    <p class="text-muted">Enregistrez vos dépenses pour un suivi précis.</p>
+                    <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn-modern btn-danger-modern">
+                        <i class="bi bi-plus-circle"></i>Première dépense
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
 
-{# Graphique simple (à implémenter plus tard) #}
+<!-- Analyse avancée -->
 {% if period.incomes|length > 0 or period.expenses|length > 0 %}
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-bar-chart"></i> Répartition</h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-6">
-                        <canvas id="budgetChart" width="400" height="200"></canvas>
+<div class="modern-card">
+    <div class="card-header-modern">
+        <h3 class="card-title-modern">
+            <i class="bi bi-graph-up me-2"></i>Analyse de la période
+        </h3>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="analysis-section">
+                <h5 class="mb-3">Indicateurs clés</h5>
+                <div class="kpi-list">
+                    {% if period.totalIncome > 0 %}
+                        {% set savingsRate = (period.balance / period.totalIncome) * 100 %}
+                        <div class="kpi-item">
+                            <span class="kpi-label">Taux d'épargne</span>
+                            <span class="kpi-value {{ savingsRate >= 20 ? 'text-success' : (savingsRate >= 10 ? 'text-warning' : 'text-danger') }}">
+                                {{ savingsRate|number_format(1) }}%
+                            </span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="kpi-item">
+                        <span class="kpi-label">Transactions totales</span>
+                        <span class="kpi-value text-info">{{ (period.incomes|length + period.expenses|length) }}</span>
                     </div>
-                    <div class="col-md-6">
-                        <h6>Analyse de la période</h6>
-                        <ul class="list-unstyled">
-                            {% if period.totalIncome > 0 %}
-                            <li>
-                                <strong>Taux d'épargne :</strong> 
-                                {% set savingsRate = (period.balance / period.totalIncome) * 100 %}
-                                <span class="{% if savingsRate >= 20 %}text-success{% elseif savingsRate >= 10 %}text-warning{% else %}text-danger{% endif %}">
-                                    {{ savingsRate|number_format(1) }}%
-                                </span>
-                            </li>
-                            {% endif %}
-                            <li><strong>Nombre de transactions :</strong> {{ (period.incomes|length + period.expenses|length) }}</li>
-                            {% if period.expenses|length > 0 %}
-                            <li><strong>Dépense moyenne :</strong> {{ (period.totalExpenses / period.expenses|length)|number_format(2, ',', ' ') }}€</li>
-                            {% endif %}
-                        </ul>
-                    </div>
+                    
+                    {% if period.expenses|length > 0 %}
+                        <div class="kpi-item">
+                            <span class="kpi-label">Dépense moyenne</span>
+                            <span class="kpi-value text-muted">{{ (period.totalExpenses / period.expenses|length)|number_format(0, ',', ' ') }}€</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if period.incomes|length > 0 %}
+                        <div class="kpi-item">
+                            <span class="kpi-label">Revenu moyen</span>
+                            <span class="kpi-value text-muted">{{ (period.totalIncome / period.incomes|length)|number_format(0, ',', ' ') }}€</span>
+                        </div>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="budgetChart" width="400" height="300"></canvas>
             </div>
         </div>
     </div>
@@ -223,40 +274,335 @@
 {% endif %}
 {% endblock %}
 
+{% block extra_styles %}
+.stat-card-main {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-main:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.stat-card-main.success {
+    background: linear-gradient(135deg, #43e97b 0%, #38d9a9 100%);
+    color: white;
+}
+
+.stat-card-main.danger {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.stat-card-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    transform: translate(30px, -30px);
+}
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.stat-header i {
+    font-size: 1.5rem;
+}
+
+.stat-title {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.stat-detail {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.quick-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    color: inherit;
+    text-decoration: none;
+}
+
+.quick-action.success {
+    background: rgba(67, 233, 123, 0.05);
+    color: #43e97b;
+}
+
+.quick-action.success:hover {
+    border-color: rgba(67, 233, 123, 0.3);
+    background: rgba(67, 233, 123, 0.1);
+}
+
+.quick-action.danger {
+    background: rgba(240, 147, 251, 0.05);
+    color: #f093fb;
+}
+
+.quick-action.danger:hover {
+    border-color: rgba(240, 147, 251, 0.3);
+    background: rgba(240, 147, 251, 0.1);
+}
+
+.quick-action.info {
+    background: rgba(79, 172, 254, 0.05);
+    color: #4facfe;
+}
+
+.quick-action.info:hover {
+    border-color: rgba(79, 172, 254, 0.3);
+    background: rgba(79, 172, 254, 0.1);
+}
+
+.quick-action.warning {
+    background: rgba(255, 193, 7, 0.05);
+    color: #ffc107;
+}
+
+.quick-action.warning:hover {
+    border-color: rgba(255, 193, 7, 0.3);
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.quick-action i {
+    font-size: 1.5rem;
+    min-width: 24px;
+}
+
+.action-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.action-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+.transaction-list {
+    padding: 0;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.transaction-item:hover {
+    background: #f8f9fa;
+    transform: translateX(4px);
+}
+
+.transaction-content {
+    flex: 1;
+}
+
+.transaction-link {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.transaction-link:hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.transaction-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.transaction-date {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.transaction-amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.transaction-amount.success {
+    color: #28a745;
+}
+
+.transaction-amount.danger {
+    color: #dc3545;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.analysis-section {
+    padding: 1rem;
+}
+
+.kpi-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.kpi-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.kpi-label {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.kpi-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .stat-card-main {
+        padding: 1.5rem 1rem;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-action {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    
+    .transaction-item {
+        padding: 0.75rem;
+    }
+}
+{% endblock %}
+
 {% block javascripts %}
 {% if period.incomes|length > 0 or period.expenses|length > 0 %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('budgetChart').getContext('2d');
-    const chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Revenus', 'Dépenses', 'Solde'],
-            datasets: [{
-                data: [
-                    {{ period.totalIncome }},
-                    {{ period.totalExpenses }},
-                    {{ period.balance >= 0 ? period.balance : 0 }}
-                ],
-                backgroundColor: [
-                    '#28a745',
-                    '#dc3545',
-                    '#007bff'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
+    const ctx = document.getElementById('budgetChart');
+    if (ctx) {
+        const chart = new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Revenus', 'Dépenses'],
+                datasets: [{
+                    data: [
+                        {{ period.totalIncome }},
+                        {{ period.totalExpenses }}
+                    ],
+                    backgroundColor: [
+                        'rgba(67, 233, 123, 0.8)',
+                        'rgba(240, 147, 251, 0.8)'
+                    ],
+                    borderColor: [
+                        '#43e97b',
+                        '#f093fb'
+                    ],
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return context.label + ': ' + value.toLocaleString() + '€ (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
             }
-        }
-    });
+        });
+    }
 });
 </script>
 {% endif %}
+{% endblock %} 
 {% endblock %} 

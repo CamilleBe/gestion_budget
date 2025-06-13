@@ -1,104 +1,344 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}Modifier la période - {{ parent() }}{% endblock %}
+{% block title %}Modifier {{ period.name }} - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Modifier la Période ✏️</h1>
+    <p class="page-subtitle">
+        Modification de "{{ period.name }}" ({{ period.startDate|date('d/m/Y') }} - {{ period.endDate|date('d/m/Y') }})
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn-modern btn-info-modern">
+            <i class="bi bi-eye"></i>Voir la période
+        </a>
+        <a href="{{ path('app_period_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux périodes
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0">
-                        <i class="bi bi-calendar-event text-primary me-2"></i>
-                        Modifier la période
-                    </h1>
-                    <p class="text-muted">{{ period.name }} ({{ period.startDate|date('d/m/Y') }} - {{ period.endDate|date('d/m/Y') }})</p>
-                </div>
-                <div>
-                    <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Retour
-                    </a>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-pencil me-2"></i>Modifier la période
+                </h3>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge-modern" style="background: var(--primary-gradient); color: white;">
+                        <i class="bi bi-calendar3 me-1"></i>Période
+                    </span>
+                    <span class="badge-modern" style="background: rgba(79, 172, 254, 0.1); color: #4facfe;">
+                        <i class="bi bi-clock me-1"></i>{{ period.startDate.diff(period.endDate).days|abs + 1 }} jour{{ period.startDate.diff(period.endDate).days|abs > 0 ? 's' : '' }}
+                    </span>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-pencil-square"></i>
-                        Informations de la période
-                    </h5>
+            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                <div class="form-group-modern">
+                    {{ form_row(form.name, {
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Janvier 2024, Trimestre 1, Budget Vacances...'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
+                    <div class="form-text-modern">
+                        <i class="bi bi-lightbulb text-warning me-1"></i>
+                        Suggestions : "Janvier 2024", "Trimestre 1 2024", "Budget Vacances"
+                    </div>
                 </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_label(form.name, 'Nom de la période', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.name) }}
-                            <div class="form-text">
-                                <i class="bi bi-lightbulb text-warning"></i>
-                                Suggestions : "Janvier 2024", "Trimestre 1 2024", "Budget Vacances"
-                            </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.startDate, {
+                                'attr': {'class': 'form-control-modern'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form_label(form.startDate, 'Date de début', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                                    {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.startDate) }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form_label(form.endDate, 'Date de fin', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                                    {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.endDate) }}
-                                </div>
-                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.endDate, {
+                                'attr': {'class': 'form-control-modern'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
                         </div>
-
-
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary me-md-2">
-                                <i class="bi bi-x-circle"></i> Annuler
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
-                            </button>
+                    </div>
+                </div>
+                
+                <div class="alert" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; padding: 1rem;">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Attention :</strong> La modification des dates peut affecter l'organisation de vos revenus et dépenses.
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-between">
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-danger" style="border-radius: 12px; padding: 0.75rem 1.5rem;" 
+                                data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Supprimer
+                        </button>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-x me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn-modern btn-primary-modern">
+                            <i class="bi bi-check-circle me-2"></i>Sauvegarder
+                        </button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        
+        <!-- Informations de la période -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-bar-chart me-2"></i>Aperçu de la période
+                </h3>
+            </div>
+            
+            <div class="period-overview">
+                <div class="row text-center">
+                    {% set totalIncomes = 0 %}
+                    {% set totalExpenses = 0 %}
+                    {% for income in period.incomes %}
+                        {% set totalIncomes = totalIncomes + income.amount %}
+                    {% endfor %}
+                    {% for expense in period.expenses %}
+                        {% set totalExpenses = totalExpenses + expense.amount %}
+                    {% endfor %}
+                    {% set balance = totalIncomes - totalExpenses %}
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box-period success">
+                            <div class="stat-icon">
+                                <i class="bi bi-arrow-up-circle"></i>
+                            </div>
+                            <div class="stat-value">{{ totalIncomes|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Revenus</div>
+                            <div class="stat-count">{{ period.incomes|length }} transaction{{ period.incomes|length > 1 ? 's' : '' }}</div>
                         </div>
-                    {{ form_end(form) }}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box-period danger">
+                            <div class="stat-icon">
+                                <i class="bi bi-arrow-down-circle"></i>
+                            </div>
+                            <div class="stat-value">{{ totalExpenses|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Dépenses</div>
+                            <div class="stat-count">{{ period.expenses|length }} transaction{{ period.expenses|length > 1 ? 's' : '' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box-period {{ balance >= 0 ? 'success' : 'danger' }}">
+                            <div class="stat-icon">
+                                <i class="bi bi-{{ balance >= 0 ? 'plus' : 'dash' }}-circle"></i>
+                            </div>
+                            <div class="stat-value">{{ balance|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Solde</div>
+                            <div class="stat-count">{{ balance >= 0 ? 'Positif' : 'Négatif' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box-period info">
+                            <div class="stat-icon">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                            <div class="stat-value">{{ (period.incomes|length + period.expenses|length) }}</div>
+                            <div class="stat-label">Total transactions</div>
+                            <div class="stat-count">sur la période</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                    Supprimer la période
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette période ?</p>
+                <div class="alert" style="background: rgba(79, 172, 254, 0.1); color: #4facfe; border: 1px solid rgba(79, 172, 254, 0.2); border-radius: 12px;">
+                    <strong>Période :</strong> {{ period.name }}<br>
+                    <strong>Dates :</strong> {{ period.startDate|date('d/m/Y') }} - {{ period.endDate|date('d/m/Y') }}<br>
+                    <strong>Revenus :</strong> {{ period.incomes|length }} transaction{{ period.incomes|length > 1 ? 's' : '' }}<br>
+                    <strong>Dépenses :</strong> {{ period.expenses|length }} transaction{{ period.expenses|length > 1 ? 's' : '' }}
+                </div>
+                <div class="alert" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px;">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <strong>Attention :</strong> Cette action supprimera aussi tous les revenus et dépenses associés !
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
+                    Annuler
+                </button>
+                <form method="post" action="{{ path('app_period_delete', {id: period.id}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ period.id) }}">
+                    <button class="btn btn-danger" style="border-radius: 12px;">
+                        <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+.period-overview {
+    padding: 1rem;
+}
+
+.stat-box-period {
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.stat-box-period:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-box-period.success {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.stat-box-period.danger {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.stat-box-period.info {
+    background: rgba(79, 172, 254, 0.1);
+}
+
+.stat-box-period .stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-box-period.success .stat-icon,
+.stat-box-period.success .stat-value {
+    color: #28a745;
+}
+
+.stat-box-period.danger .stat-icon,
+.stat-box-period.danger .stat-value {
+    color: #dc3545;
+}
+
+.stat-box-period.info .stat-icon,
+.stat-box-period.info .stat-value {
+    color: #4facfe;
+}
+
+.stat-box-period .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-box-period .stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.stat-box-period .stat-count {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.form-text-modern {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .stat-box-period {
+        padding: 1rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .stat-box-period .stat-icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-box-period .stat-value {
+        font-size: 1.25rem;
+    }
+}
+{% endblock %}
+
+{% block javascripts %}
 <script>
-// Validation des dates en temps réel
 document.addEventListener('DOMContentLoaded', function() {
+    // Validation des dates en temps réel
     const startDateInput = document.getElementById('period_startDate');
     const endDateInput = document.getElementById('period_endDate');
     
     function validateDates() {
-        if (startDateInput.value && endDateInput.value) {
+        if (startDateInput && endDateInput && startDateInput.value && endDateInput.value) {
             const startDate = new Date(startDateInput.value);
             const endDate = new Date(endDateInput.value);
             
             if (startDate >= endDate) {
                 endDateInput.setCustomValidity('La date de fin doit être postérieure à la date de début');
+                endDateInput.style.borderColor = '#dc3545';
             } else {
                 endDateInput.setCustomValidity('');
+                endDateInput.style.borderColor = '';
             }
         }
     }
     
-    startDateInput.addEventListener('change', validateDates);
-    endDateInput.addEventListener('change', validateDates);
+    if (startDateInput) startDateInput.addEventListener('change', validateDates);
+    if (endDateInput) endDateInput.addEventListener('change', validateDates);
+    
+    // Animation au focus des champs de formulaire
+    document.querySelectorAll('.form-control-modern').forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Animation pour le bouton de suppression
+    const deleteBtn = document.querySelector('[data-bs-toggle="modal"]');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 5px 15px rgba(220, 53, 69, 0.3)';
+        });
+        
+        deleteBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    }
 });
 </script>
 {% endblock %} 
