@@ -1,14 +1,14 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}Nouvelle catégorie - Budget Manager{% endblock %}
+{% block title %}Nouveau type - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <h1 class="page-title">Nouvelle Catégorie 🏷️</h1>
-    <p class="page-subtitle">Créer une nouvelle catégorie pour organiser vos transactions</p>
+    <h1 class="page-title">Nouveau Type de Transaction 🏷️</h1>
+    <p class="page-subtitle">Définir un nouveau type pour classer vos opérations financières</p>
     <div class="d-flex gap-3 flex-wrap">
         <a href="{{ path('app_category_index') }}" class="btn-modern btn-info-modern">
-            <i class="bi bi-arrow-left"></i>Retour aux catégories
+            <i class="bi bi-arrow-left"></i>Retour aux types
         </a>
     </div>
 </div>
@@ -20,14 +20,14 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-plus-circle me-2"></i>Créer une catégorie
+                    <i class="bi bi-plus-circle me-2"></i>Définir un type
                 </h3>
             </div>
 
             {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
                 <div class="form-group-modern">
                     {{ form_row(form.name, {
-                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Logement, Transport...'},
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Habitation, Déplacements...'},
                         'label_attr': {'class': 'form-label-modern'}
                     }) }}
                 </div>
@@ -41,25 +41,25 @@
                 
                 <div class="alert" style="background: rgba(67, 233, 123, 0.1); color: #43e97b; border: 1px solid rgba(67, 233, 123, 0.2); border-radius: 12px; padding: 1rem;">
                     <i class="bi bi-lightbulb me-2"></i>
-                    <strong>Astuce :</strong> Les catégories vous aident à organiser et analyser vos finances. Choisissez des noms clairs et précis.
+                    <strong>Conseil :</strong> Les types vous permettent de structurer et d'analyser vos finances. Optez pour des appellations claires et spécifiques.
                 </div>
                 
                 <div class="d-flex gap-3 justify-content-end">
                     <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
-                        <i class="bi bi-arrow-left me-2"></i>Annuler
+                        <i class="bi bi-arrow-left me-2"></i>Abandonner
                     </a>
                     <button type="submit" class="btn-modern">
-                        <i class="bi bi-check-circle me-2"></i>Créer la catégorie
+                        <i class="bi bi-check-circle me-2"></i>Enregistrer le type
                     </button>
                 </div>
             {{ form_end(form) }}
         </div>
         
-        <!-- Suggestions de catégories -->
+        <!-- Propositions de types -->
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-lightbulb me-2"></i>Suggestions de catégories
+                    <i class="bi bi-lightbulb me-2"></i>Propositions de types
                 </h3>
             </div>
             
@@ -67,7 +67,7 @@
                 <div class="col-md-6">
                     <div class="suggestion-section">
                         <h5 class="suggestion-title text-success mb-3">
-                            <i class="bi bi-arrow-up-circle me-2"></i>Revenus
+                            <i class="bi bi-arrow-up-circle me-2"></i>Entrées d'argent
                         </h5>
                         <div class="suggestion-grid">
                             <button type="button" class="suggestion-item income-suggestion" 
@@ -76,24 +76,24 @@
                                 <span>Salaire</span>
                             </button>
                             <button type="button" class="suggestion-item income-suggestion" 
-                                    data-name="Freelance" data-type="INCOME">
+                                    data-name="Travail indépendant" data-type="INCOME">
                                 <i class="bi bi-laptop"></i>
-                                <span>Freelance</span>
+                                <span>Travail indépendant</span>
                             </button>
                             <button type="button" class="suggestion-item income-suggestion" 
-                                    data-name="Primes" data-type="INCOME">
+                                    data-name="Bonus" data-type="INCOME">
                                 <i class="bi bi-award"></i>
-                                <span>Primes</span>
+                                <span>Bonus</span>
                             </button>
                             <button type="button" class="suggestion-item income-suggestion" 
-                                    data-name="Investissements" data-type="INCOME">
+                                    data-name="Placements" data-type="INCOME">
                                 <i class="bi bi-graph-up"></i>
-                                <span>Investissements</span>
+                                <span>Placements</span>
                             </button>
                             <button type="button" class="suggestion-item income-suggestion" 
-                                    data-name="Allocations" data-type="INCOME">
+                                    data-name="Aides" data-type="INCOME">
                                 <i class="bi bi-piggy-bank"></i>
-                                <span>Allocations</span>
+                                <span>Aides</span>
                             </button>
                         </div>
                     </div>
@@ -102,33 +102,33 @@
                 <div class="col-md-6">
                     <div class="suggestion-section">
                         <h5 class="suggestion-title text-danger mb-3">
-                            <i class="bi bi-arrow-down-circle me-2"></i>Dépenses
+                            <i class="bi bi-arrow-down-circle me-2"></i>Sorties d'argent
                         </h5>
                         <div class="suggestion-grid">
                             <button type="button" class="suggestion-item expense-suggestion" 
-                                    data-name="Logement" data-type="EXPENSE">
+                                    data-name="Habitation" data-type="EXPENSE">
                                 <i class="bi bi-house"></i>
-                                <span>Logement</span>
+                                <span>Habitation</span>
                             </button>
                             <button type="button" class="suggestion-item expense-suggestion" 
-                                    data-name="Transport" data-type="EXPENSE">
+                                    data-name="Déplacements" data-type="EXPENSE">
                                 <i class="bi bi-car-front"></i>
-                                <span>Transport</span>
+                                <span>Déplacements</span>
                             </button>
                             <button type="button" class="suggestion-item expense-suggestion" 
-                                    data-name="Alimentation" data-type="EXPENSE">
+                                    data-name="Nourriture" data-type="EXPENSE">
                                 <i class="bi bi-cart"></i>
-                                <span>Alimentation</span>
+                                <span>Nourriture</span>
                             </button>
                             <button type="button" class="suggestion-item expense-suggestion" 
-                                    data-name="Santé" data-type="EXPENSE">
+                                    data-name="Médical" data-type="EXPENSE">
                                 <i class="bi bi-heart-pulse"></i>
-                                <span>Santé</span>
+                                <span>Médical</span>
                             </button>
                             <button type="button" class="suggestion-item expense-suggestion" 
-                                    data-name="Loisirs" data-type="EXPENSE">
+                                    data-name="Divertissements" data-type="EXPENSE">
                                 <i class="bi bi-controller"></i>
-                                <span>Loisirs</span>
+                                <span>Divertissements</span>
                             </button>
                         </div>
                     </div>
@@ -221,53 +221,57 @@
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Gestion des suggestions de catégories
-    document.querySelectorAll('.suggestion-item').forEach(button => {
-        button.addEventListener('click', function() {
+    const nameField = document.querySelector('#category_name');
+    const typeField = document.querySelector('#category_type');
+    const suggestions = document.querySelectorAll('.suggestion-item');
+    
+    suggestions.forEach(suggestion => {
+        suggestion.addEventListener('click', function() {
             const name = this.dataset.name;
             const type = this.dataset.type;
             
-            // Remplir les champs du formulaire
-            const nameField = document.getElementById('category_name');
-            const typeField = document.getElementById('category_type');
+            // Remplir les champs
+            nameField.value = name;
+            typeField.value = type;
             
-            if (nameField) {
-                nameField.value = name;
-                nameField.focus();
-                // Effet de focus moderne
-                nameField.style.borderColor = '#667eea';
-                nameField.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
-            }
+            // Retirer la sélection précédente
+            suggestions.forEach(s => s.classList.remove('selected'));
             
-            if (typeField) {
-                typeField.value = type;
-            }
-            
-            // Retirer la sélection de tous les boutons
-            document.querySelectorAll('.suggestion-item').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            // Ajouter la classe selected au bouton cliqué
+            // Ajouter la sélection actuelle
             this.classList.add('selected');
             
-            // Animation de succès
-            this.style.transform = 'scale(0.95)';
+            // Animation
+            this.style.transform = 'scale(1.05)';
             setTimeout(() => {
                 this.style.transform = 'translateY(-2px)';
-            }, 150);
+            }, 200);
         });
     });
     
-    // Animation au survol des champs de formulaire
+    // Animation des champs de formulaire
     document.querySelectorAll('.form-control-modern').forEach(field => {
         field.addEventListener('focus', function() {
             this.parentElement.style.transform = 'translateY(-2px)';
+            this.parentElement.style.transition = 'all 0.3s ease';
         });
         
         field.addEventListener('blur', function() {
             this.parentElement.style.transform = 'translateY(0)';
         });
+    });
+    
+    // Validation en temps réel
+    nameField.addEventListener('input', function() {
+        const value = this.value.trim();
+        const submitBtn = document.querySelector('button[type="submit"]');
+        
+        if (value.length >= 2) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+        }
     });
 });
 </script>

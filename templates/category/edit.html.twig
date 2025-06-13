@@ -1,17 +1,17 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}Modifier {{ category.name }} - Budget Manager{% endblock %}
+{% block title %}Éditer {{ category.name }} - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <h1 class="page-title">Modifier la Catégorie ✏️</h1>
-    <p class="page-subtitle">Modifier les informations de la catégorie "{{ category.name }}"</p>
+    <h1 class="page-title">Éditer le Type ✏️</h1>
+    <p class="page-subtitle">Ajuster les paramètres du type "{{ category.name }}"</p>
     <div class="d-flex gap-3 flex-wrap">
         <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn-modern btn-info-modern">
-            <i class="bi bi-eye"></i>Voir la catégorie
+            <i class="bi bi-eye"></i>Consulter le type
         </a>
         <a href="{{ path('app_category_index') }}" class="btn-modern">
-            <i class="bi bi-arrow-left"></i>Retour aux catégories
+            <i class="bi bi-arrow-left"></i>Retour aux types
         </a>
     </div>
 </div>
@@ -23,16 +23,16 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-pencil me-2"></i>Modifier la catégorie
+                    <i class="bi bi-pencil me-2"></i>Ajuster le type
                 </h3>
                 <div class="d-flex align-items-center">
                     {% if category.type.value == 'INCOME' %}
                         <span class="badge-modern" style="background: var(--success-gradient); color: white;">
-                            <i class="bi bi-arrow-up-circle me-1"></i>Revenu
+                            <i class="bi bi-arrow-up-circle me-1"></i>Entrée
                         </span>
                     {% else %}
                         <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
-                            <i class="bi bi-arrow-down-circle me-1"></i>Dépense
+                            <i class="bi bi-arrow-down-circle me-1"></i>Sortie
                         </span>
                     {% endif %}
                 </div>
@@ -41,7 +41,7 @@
             {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
                 <div class="form-group-modern">
                     {{ form_row(form.name, {
-                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Logement, Transport...'},
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Habitation, Déplacements...'},
                         'label_attr': {'class': 'form-label-modern'}
                     }) }}
                 </div>
@@ -55,7 +55,7 @@
                 
                 <div class="alert" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; padding: 1rem;">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    <strong>Attention :</strong> Modifier le type de catégorie peut affecter l'organisation de vos transactions existantes.
+                    <strong>Prudence :</strong> Changer la nature du type peut impacter l'organisation de vos opérations existantes.
                 </div>
                 
                 <div class="d-flex gap-3 justify-content-between">
@@ -63,27 +63,27 @@
                         {% if category.incomes|length == 0 and category.expenses|length == 0 %}
                             <button type="button" class="btn btn-outline-danger" style="border-radius: 12px; padding: 0.75rem 1.5rem;" 
                                     data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                <i class="bi bi-trash me-2"></i>Supprimer
+                                <i class="bi bi-trash me-2"></i>Effacer
                             </button>
                         {% endif %}
                     </div>
                     <div class="d-flex gap-3">
                         <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
-                            <i class="bi bi-x me-2"></i>Annuler
+                            <i class="bi bi-x me-2"></i>Abandonner
                         </a>
                         <button type="submit" class="btn-modern">
-                            <i class="bi bi-check-circle me-2"></i>Sauvegarder
+                            <i class="bi bi-check-circle me-2"></i>Enregistrer
                         </button>
                     </div>
                 </div>
             {{ form_end(form) }}
         </div>
         
-        <!-- Statistiques de la catégorie -->
+        <!-- Données du type -->
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-graph-up me-2"></i>Statistiques de la catégorie
+                    <i class="bi bi-graph-up me-2"></i>Données du type
                 </h3>
             </div>
             
@@ -92,7 +92,7 @@
                     <div class="col-md-4">
                         <div class="p-3 rounded" style="background: rgba(40, 167, 69, 0.1);">
                             <h4 class="text-success mb-1">{{ category.incomes|length }}</h4>
-                            <small class="text-muted">Transaction{{ category.incomes|length > 1 ? 's' : '' }}</small>
+                            <small class="text-muted">Opération{{ category.incomes|length > 1 ? 's' : '' }}</small>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -102,7 +102,7 @@
                                 {% set totalAmount = totalAmount + income.amount %}
                             {% endfor %}
                             <h4 class="text-success mb-1">{{ totalAmount|number_format(0, ',', ' ') }}€</h4>
-                            <small class="text-muted">Total</small>
+                            <small class="text-muted">Somme</small>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -116,7 +116,7 @@
                     <div class="col-md-4">
                         <div class="p-3 rounded" style="background: rgba(220, 53, 69, 0.1);">
                             <h4 class="text-danger mb-1">{{ category.expenses|length }}</h4>
-                            <small class="text-muted">Transaction{{ category.expenses|length > 1 ? 's' : '' }}</small>
+                            <small class="text-muted">Opération{{ category.expenses|length > 1 ? 's' : '' }}</small>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -126,7 +126,7 @@
                                 {% set totalAmount = totalAmount + expense.amount %}
                             {% endfor %}
                             <h4 class="text-danger mb-1">{{ totalAmount|number_format(0, ',', ' ') }}€</h4>
-                            <small class="text-muted">Total</small>
+                            <small class="text-muted">Somme</small>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -142,7 +142,7 @@
     </div>
 </div>
 
-<!-- Modal de suppression -->
+<!-- Fenêtre de suppression -->
 {% if category.incomes|length == 0 and category.expenses|length == 0 %}
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
@@ -150,25 +150,25 @@
             <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                 <h5 class="modal-title">
                     <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                    Supprimer la catégorie
+                    Effacer le type
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer la catégorie <strong>"{{ category.name }}"</strong> ?</p>
+                <p>Confirmez-vous l'effacement du type <strong>"{{ category.name }}"</strong> ?</p>
                 <div class="alert" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px;">
                     <i class="bi bi-info-circle me-2"></i>
-                    Cette action est irréversible.
+                    Cette opération ne peut pas être annulée.
                 </div>
             </div>
             <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
-                    Annuler
+                    Conserver
                 </button>
                 <form method="post" action="{{ path('app_category_delete', {id: category.id}) }}" style="display: inline;">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
                     <button class="btn btn-danger" style="border-radius: 12px;">
-                        <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                        <i class="bi bi-trash me-2"></i>Effacer définitivement
                     </button>
                 </form>
             </div>
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Animation pour le bouton de suppression
+    // Animation pour le bouton d'effacement
     const deleteBtn = document.querySelector('[data-bs-toggle="modal"]');
     if (deleteBtn) {
         deleteBtn.addEventListener('mouseenter', function() {
@@ -203,6 +203,26 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteBtn.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
             this.style.boxShadow = 'none';
+        });
+    }
+    
+    // Validation en temps réel
+    const nameField = document.querySelector('#category_name');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    
+    if (nameField && submitBtn) {
+        nameField.addEventListener('input', function() {
+            const value = this.value.trim();
+            
+            if (value.length >= 2) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.transform = 'scale(1)';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.6';
+                submitBtn.style.transform = 'scale(0.98)';
+            }
         });
     }
 });

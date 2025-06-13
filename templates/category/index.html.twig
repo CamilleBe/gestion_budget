@@ -1,17 +1,17 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}Catégories - Budget Manager{% endblock %}
+{% block title %}Types de transactions - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <h1 class="page-title">Mes Catégories 🏷️</h1>
-    <p class="page-subtitle">Organiser vos transactions par catégories</p>
+    <h1 class="page-title">Mes Types de Transactions 🏷️</h1>
+    <p class="page-subtitle">Classer vos opérations financières par types</p>
     <div class="d-flex gap-3 flex-wrap">
         <a href="{{ path('app_category_new') }}" class="btn-modern">
-            <i class="bi bi-plus-circle"></i>Nouvelle catégorie
+            <i class="bi bi-plus-circle"></i>Nouveau type
         </a>
         <a href="{{ path('app_dashboard') }}" class="btn-modern btn-info-modern">
-            <i class="bi bi-graph-up"></i>Dashboard
+            <i class="bi bi-graph-up"></i>Tableau de bord
         </a>
     </div>
 </div>
@@ -19,16 +19,16 @@
 
 {% block body %}
 <div class="row">
-    <!-- Catégories de revenus -->
+    <!-- Types d'entrées d'argent -->
     <div class="col-lg-6">
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-arrow-up-circle text-success me-2"></i>Catégories de revenus
+                    <i class="bi bi-arrow-up-circle text-success me-2"></i>Types d'entrées d'argent
                 </h3>
                 <span class="badge-modern" style="background: var(--success-gradient); color: white;">
                     {% set incomeCategories = categories|filter(c => c.type.value == 'INCOME') %}
-                    {{ incomeCategories|length }} catégorie{{ incomeCategories|length > 1 ? 's' : '' }}
+                    {{ incomeCategories|length }} type{{ incomeCategories|length > 1 ? 's' : '' }}
                 </span>
             </div>
 
@@ -41,15 +41,15 @@
                         </div>
                         <div class="category-content">
                             <h6 class="category-name">{{ category.name }}</h6>
-                            <small class="text-muted">{{ category.incomes|length }} revenu{{ category.incomes|length > 1 ? 's' : '' }}</small>
+                            <small class="text-muted">{{ category.incomes|length }} entrée{{ category.incomes|length > 1 ? 's' : '' }}</small>
                         </div>
                         <div class="category-actions">
                             <a href="{{ path('app_category_show', {id: category.id}) }}" 
-                               class="btn btn-sm btn-outline-primary" title="Voir">
+                               class="btn btn-sm btn-outline-primary" title="Consulter">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a href="{{ path('app_category_edit', {id: category.id}) }}" 
-                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                               class="btn btn-sm btn-outline-warning" title="Éditer">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </div>
@@ -59,25 +59,25 @@
             {% else %}
                 <div class="text-center py-4">
                     <i class="bi bi-folder-plus text-muted" style="font-size: 3rem;"></i>
-                    <p class="text-muted mt-3 mb-3">Aucune catégorie de revenu</p>
+                    <p class="text-muted mt-3 mb-3">Aucun type d'entrée d'argent</p>
                     <a href="{{ path('app_category_new') }}" class="btn-modern btn-success-modern btn-sm">
-                        <i class="bi bi-plus"></i>Créer une catégorie
+                        <i class="bi bi-plus"></i>Ajouter un type
                     </a>
                 </div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Catégories de dépenses -->
+    <!-- Types de sorties d'argent -->
     <div class="col-lg-6">
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-arrow-down-circle text-danger me-2"></i>Catégories de dépenses
+                    <i class="bi bi-arrow-down-circle text-danger me-2"></i>Types de sorties d'argent
                 </h3>
                 <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
                     {% set expenseCategories = categories|filter(c => c.type.value == 'EXPENSE') %}
-                    {{ expenseCategories|length }} catégorie{{ expenseCategories|length > 1 ? 's' : '' }}
+                    {{ expenseCategories|length }} type{{ expenseCategories|length > 1 ? 's' : '' }}
                 </span>
             </div>
 
@@ -90,15 +90,15 @@
                         </div>
                         <div class="category-content">
                             <h6 class="category-name">{{ category.name }}</h6>
-                            <small class="text-muted">{{ category.expenses|length }} dépense{{ category.expenses|length > 1 ? 's' : '' }}</small>
+                            <small class="text-muted">{{ category.expenses|length }} sortie{{ category.expenses|length > 1 ? 's' : '' }}</small>
                         </div>
                         <div class="category-actions">
                             <a href="{{ path('app_category_show', {id: category.id}) }}" 
-                               class="btn btn-sm btn-outline-primary" title="Voir">
+                               class="btn btn-sm btn-outline-primary" title="Consulter">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a href="{{ path('app_category_edit', {id: category.id}) }}" 
-                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                               class="btn btn-sm btn-outline-warning" title="Éditer">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </div>
@@ -108,9 +108,9 @@
             {% else %}
                 <div class="text-center py-4">
                     <i class="bi bi-folder-plus text-muted" style="font-size: 3rem;"></i>
-                    <p class="text-muted mt-3 mb-3">Aucune catégorie de dépense</p>
+                    <p class="text-muted mt-3 mb-3">Aucun type de sortie d'argent</p>
                     <a href="{{ path('app_category_new') }}" class="btn-modern btn-warning-modern btn-sm">
-                        <i class="bi bi-plus"></i>Créer une catégorie
+                        <i class="bi bi-plus"></i>Ajouter un type
                     </a>
                 </div>
             {% endif %}
@@ -122,18 +122,18 @@
 <div class="modern-card mt-4">
     <div class="card-header-modern">
         <h3 class="card-title-modern">
-            <i class="bi bi-list me-2"></i>Toutes les catégories
+            <i class="bi bi-list me-2"></i>Ensemble des types
         </h3>
     </div>
     <div class="table-modern">
         <table class="table table-hover mb-0">
             <thead>
                 <tr>
-                    <th><i class="bi bi-tag me-2"></i>Nom</th>
-                    <th><i class="bi bi-arrow-up-down me-2"></i>Type</th>
-                    <th><i class="bi bi-files me-2"></i>Transactions</th>
-                    <th><i class="bi bi-currency-euro me-2"></i>Total</th>
-                    <th><i class="bi bi-gear me-2"></i>Actions</th>
+                    <th><i class="bi bi-tag me-2"></i>Libellé</th>
+                    <th><i class="bi bi-arrow-up-down me-2"></i>Nature</th>
+                    <th><i class="bi bi-files me-2"></i>Opérations</th>
+                    <th><i class="bi bi-currency-euro me-2"></i>Montant</th>
+                    <th><i class="bi bi-gear me-2"></i>Options</th>
                 </tr>
             </thead>
             <tbody>
@@ -154,19 +154,19 @@
                     <td>
                         {% if category.type.value == 'INCOME' %}
                             <span class="badge-modern" style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
-                                Revenu
+                                Entrée
                             </span>
                         {% else %}
                             <span class="badge-modern" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                                Dépense
+                                Sortie
                             </span>
                         {% endif %}
                     </td>
                     <td>
                         {% if category.type.value == 'INCOME' %}
-                            {{ category.incomes|length }} transaction{{ category.incomes|length > 1 ? 's' : '' }}
+                            {{ category.incomes|length }} opération{{ category.incomes|length > 1 ? 's' : '' }}
                         {% else %}
-                            {{ category.expenses|length }} transaction{{ category.expenses|length > 1 ? 's' : '' }}
+                            {{ category.expenses|length }} opération{{ category.expenses|length > 1 ? 's' : '' }}
                         {% endif %}
                     </td>
                     <td>
@@ -186,11 +186,11 @@
                     <td>
                         <div class="d-flex gap-2">
                             <a href="{{ path('app_category_show', {id: category.id}) }}" 
-                               class="btn btn-sm btn-outline-primary" title="Voir">
+                               class="btn btn-sm btn-outline-primary" title="Consulter">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a href="{{ path('app_category_edit', {id: category.id}) }}" 
-                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                               class="btn btn-sm btn-outline-warning" title="Éditer">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </div>
@@ -199,6 +199,17 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+{% else %}
+<div class="modern-card">
+    <div class="text-center py-5">
+        <i class="bi bi-folder-x text-muted" style="font-size: 4rem;"></i>
+        <h4 class="text-muted mt-3 mb-3">Aucun type configuré</h4>
+        <p class="text-muted mb-4">Commencez par définir vos premiers types de transactions</p>
+        <a href="{{ path('app_category_new') }}" class="btn-modern">
+            <i class="bi bi-plus-circle me-2"></i>Définir un type
+        </a>
     </div>
 </div>
 {% endif %}
