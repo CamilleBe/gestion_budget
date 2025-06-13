@@ -1,24 +1,24 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}{{ income.description }} - Budget Manager{% endblock %}
+{% block title %}{{ income.description }} - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
     <h1 class="page-title">{{ income.description }} 💰</h1>
     <p class="page-subtitle">
-        Détail du revenu du {{ income.date|date('d/m/Y') }} - {{ income.amount|number_format(2, ',', ' ') }}€
+        Détail de l'entrée du {{ income.date|date('d/m/Y') }} - {{ income.amount|number_format(2, ',', ' ') }}€
     </p>
     <div class="d-flex gap-3 flex-wrap">
         <a href="{{ path('app_income_edit', {id: income.id}) }}" class="btn-modern btn-warning-modern">
-            <i class="bi bi-pencil"></i>Modifier
+            <i class="bi bi-pencil"></i>Éditer
         </a>
         {% if income.period %}
             <a href="{{ path('app_period_show', {id: income.period.id}) }}" class="btn-modern btn-info-modern">
-                <i class="bi bi-calendar-event"></i>Voir la période
+                <i class="bi bi-calendar-event"></i>Consulter l'intervalle
             </a>
         {% endif %}
         <a href="{{ path('app_income_index') }}" class="btn-modern">
-            <i class="bi bi-arrow-left"></i>Retour aux revenus
+            <i class="bi bi-arrow-left"></i>Retour aux entrées
         </a>
     </div>
 </div>
@@ -31,18 +31,18 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-info-circle me-2"></i>Informations
+                    <i class="bi bi-info-circle me-2"></i>Détails
                 </h3>
             </div>
             
             <div class="income-info-section">
                 <div class="info-item">
-                    <div class="info-label">Description</div>
+                    <div class="info-label">Libellé</div>
                     <div class="info-value">{{ income.description }}</div>
                 </div>
                 
                 <div class="info-item">
-                    <div class="info-label">Montant</div>
+                    <div class="info-label">Valeur</div>
                     <div class="info-value">
                         <span class="amount-display success">
                             +{{ income.amount|number_format(2, ',', ' ') }}€
@@ -61,7 +61,7 @@
                 </div>
                 
                 <div class="info-item">
-                    <div class="info-label">Catégorie</div>
+                    <div class="info-label">Type</div>
                     <div class="info-value">
                         <a href="{{ path('app_category_show', {id: income.category.id}) }}" 
                            class="badge-modern" style="background: var(--success-gradient); color: white; text-decoration: none;">
@@ -72,7 +72,7 @@
                 
                 {% if income.period %}
                 <div class="info-item">
-                    <div class="info-label">Période</div>
+                    <div class="info-label">Intervalle</div>
                     <div class="info-value">
                         <a href="{{ path('app_period_show', {id: income.period.id}) }}" 
                            class="badge-modern" style="background: var(--primary-gradient); color: white; text-decoration: none;">
@@ -100,8 +100,8 @@
                 <a href="{{ path('app_income_edit', {id: income.id}) }}" class="action-btn warning">
                     <i class="bi bi-pencil"></i>
                     <div>
-                        <div class="action-title">Modifier</div>
-                        <div class="action-subtitle">Modifier ce revenu</div>
+                        <div class="action-title">Éditer</div>
+                        <div class="action-subtitle">Ajuster cette entrée</div>
                     </div>
                 </a>
                 
@@ -109,8 +109,8 @@
                 <a href="{{ path('app_income_new', {period: income.period.id}) }}" class="action-btn success">
                     <i class="bi bi-plus-circle"></i>
                     <div>
-                        <div class="action-title">Nouveau revenu</div>
-                        <div class="action-subtitle">Ajouter à cette période</div>
+                        <div class="action-title">Nouvelle entrée</div>
+                        <div class="action-subtitle">Enregistrer à cet intervalle</div>
                     </div>
                 </a>
                 {% endif %}
@@ -118,8 +118,8 @@
                 <button type="button" class="action-btn danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                     <i class="bi bi-trash"></i>
                     <div>
-                        <div class="action-title">Supprimer</div>
-                        <div class="action-subtitle">Supprimer définitivement</div>
+                        <div class="action-title">Effacer</div>
+                        <div class="action-subtitle">Effacer définitivement</div>
                     </div>
                 </button>
             </div>
@@ -132,7 +132,7 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-bar-chart me-2"></i>Statistiques de la période "{{ income.period.name }}"
+                    <i class="bi bi-bar-chart me-2"></i>Analyses de l'intervalle "{{ income.period.name }}"
                 </h3>
             </div>
             
@@ -155,8 +155,8 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-value">{{ totalIncomes|number_format(0, ',', ' ') }}€</div>
-                                <div class="stat-label">Total revenus</div>
-                                <div class="stat-count">{{ income.period.incomes|length }} transaction{{ income.period.incomes|length > 1 ? 's' : '' }}</div>
+                                <div class="stat-label">Somme entrées</div>
+                                <div class="stat-count">{{ income.period.incomes|length }} opération{{ income.period.incomes|length > 1 ? 's' : '' }}</div>
                             </div>
                         </div>
                     </div>
@@ -168,8 +168,8 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-value">{{ totalExpenses|number_format(0, ',', ' ') }}€</div>
-                                <div class="stat-label">Total dépenses</div>
-                                <div class="stat-count">{{ income.period.expenses|length }} transaction{{ income.period.expenses|length > 1 ? 's' : '' }}</div>
+                                <div class="stat-label">Somme sorties</div>
+                                <div class="stat-count">{{ income.period.expenses|length }} opération{{ income.period.expenses|length > 1 ? 's' : '' }}</div>
                             </div>
                         </div>
                     </div>
@@ -181,8 +181,8 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-value">{{ balance|number_format(0, ',', ' ') }}€</div>
-                                <div class="stat-label">Solde</div>
-                                <div class="stat-count">{{ balance >= 0 ? 'Positif' : 'Négatif' }}</div>
+                                <div class="stat-label">Bilan</div>
+                                <div class="stat-count">{{ balance >= 0 ? 'Excédent' : 'Déficit' }}</div>
                             </div>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                             <div class="stat-content">
                                 {% set percentage = totalIncomes > 0 ? ((income.amount / totalIncomes) * 100) : 0 %}
                                 <div class="stat-value">{{ percentage|number_format(1) }}%</div>
-                                <div class="stat-label">Part de ce revenu</div>
+                                <div class="stat-label">Part de cette entrée</div>
                                 <div class="stat-count">du total</div>
                             </div>
                         </div>
@@ -253,11 +253,11 @@
                                 <td>
                                     <div class="d-flex gap-1">
                                         <a href="{{ path('app_income_show', {id: otherIncome.id}) }}" 
-                                           class="btn btn-sm btn-outline-primary" title="Voir">
+                                           class="btn btn-sm btn-outline-primary" title="Consulter">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="{{ path('app_income_edit', {id: otherIncome.id}) }}" 
-                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                           class="btn btn-sm btn-outline-warning" title="Éditer">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                     </div>
@@ -271,17 +271,17 @@
                 {% if otherIncomes|length > 10 %}
                 <div class="text-center py-3">
                     <a href="{{ path('app_period_show', {id: income.period.id}) }}" class="btn btn-outline-primary">
-                        <i class="bi bi-eye me-2"></i>Voir tous les revenus ({{ otherIncomes|length - 10 }} de plus)
+                        <i class="bi bi-eye me-2"></i>Consulter toutes les entrées ({{ otherIncomes|length - 10 }} de plus)
                     </a>
                 </div>
                 {% endif %}
             {% else %}
                 <div class="text-center py-5">
                     <i class="bi bi-wallet-fill display-1 text-muted"></i>
-                    <h4 class="text-muted mt-3">Aucun autre revenu</h4>
-                    <p class="text-muted">Cette période ne contient qu'un seul revenu.</p>
+                    <h4 class="text-muted mt-3">Aucune autre entrée</h4>
+                    <p class="text-muted">Cet intervalle ne contient qu'une seule entrée.</p>
                     <a href="{{ path('app_income_new', {period: income.period.id}) }}" class="btn-modern btn-success-modern">
-                        <i class="bi bi-plus-circle"></i>Ajouter un revenu
+                        <i class="bi bi-plus-circle"></i>Enregistrer une entrée
                     </a>
                 </div>
             {% endif %}
@@ -297,31 +297,31 @@
             <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                 <h5 class="modal-title">
                     <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                    Supprimer le revenu
+                    Effacer l'entrée
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer ce revenu ?</p>
+                <p>Êtes-vous sûr de vouloir effacer cette entrée ?</p>
                 <div class="alert" style="background: rgba(67, 233, 123, 0.1); color: #43e97b; border: 1px solid rgba(67, 233, 123, 0.2); border-radius: 12px;">
-                    <strong>Revenu :</strong> {{ income.description }}<br>
-                    <strong>Montant :</strong> {{ income.amount|number_format(2, ',', ' ') }}€<br>
+                    <strong>Entrée :</strong> {{ income.description }}<br>
+                    <strong>Valeur :</strong> {{ income.amount|number_format(2, ',', ' ') }}€<br>
                     <strong>Date :</strong> {{ income.date|date('d/m/Y') }}<br>
-                    <strong>Catégorie :</strong> {{ income.category.name }}
+                    <strong>Type :</strong> {{ income.category.name }}
                 </div>
                 <div class="alert" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px;">
                     <i class="bi bi-info-circle me-2"></i>
-                    Cette action est irréversible et affectera les statistiques de la période.
+                    Cette action est irréversible et affectera les analyses de l'intervalle.
                 </div>
             </div>
             <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
-                    Annuler
+                    Abandonner
                 </button>
                 <form method="post" action="{{ path('app_income_delete', {id: income.id}) }}" style="display: inline;">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ income.id) }}">
                     <button class="btn btn-danger" style="border-radius: 12px;">
-                        <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                        <i class="bi bi-trash me-2"></i>Effacer définitivement
                     </button>
                 </form>
             </div>

@@ -1,19 +1,19 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}Modifier {{ income.description }} - Budget Manager{% endblock %}
+{% block title %}Éditer {{ income.description }} - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <h1 class="page-title">Modifier le Revenu ✏️</h1>
+    <h1 class="page-title">Éditer l'Entrée ✏️</h1>
     <p class="page-subtitle">
         Modification de "{{ income.description }}" - {{ income.amount|number_format(2, ',', ' ') }}€
     </p>
     <div class="d-flex gap-3 flex-wrap">
         <a href="{{ path('app_income_show', {id: income.id}) }}" class="btn-modern btn-info-modern">
-            <i class="bi bi-eye"></i>Voir le revenu
+            <i class="bi bi-eye"></i>Consulter l'entrée
         </a>
         <a href="{{ path('app_income_index') }}" class="btn-modern">
-            <i class="bi bi-arrow-left"></i>Retour aux revenus
+            <i class="bi bi-arrow-left"></i>Retour aux entrées
         </a>
     </div>
 </div>
@@ -25,11 +25,11 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-pencil me-2"></i>Modifier le revenu
+                    <i class="bi bi-pencil me-2"></i>Ajuster l'entrée
                 </h3>
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge-modern" style="background: var(--success-gradient); color: white;">
-                        <i class="bi bi-arrow-up-circle me-1"></i>Revenu
+                        <i class="bi bi-arrow-up-circle me-1"></i>Entrée
                     </span>
                     {% if income.period %}
                         <span class="badge-modern" style="background: var(--primary-gradient); color: white;">
@@ -42,24 +42,24 @@
             {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
                 <div class="form-group-modern">
                     {{ form_row(form.description, {
-                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Prime, Freelance...', 'list': 'income-suggestions'},
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Rémunération, Bonus, Travail indépendant...', 'list': 'income-suggestions'},
                         'label_attr': {'class': 'form-label-modern'}
                     }) }}
                     <datalist id="income-suggestions">
-                        <option value="Salaire">
-                        <option value="Prime">
+                        <option value="Rémunération">
                         <option value="Bonus">
-                        <option value="Freelance">
-                        <option value="Consultance">
-                        <option value="Dividendes">
-                        <option value="Loyer perçu">
-                        <option value="Remboursement">
-                        <option value="Vente">
-                        <option value="Cadeau">
-                        <option value="Intérêts">
-                        <option value="Aide">
-                        <option value="Bourse">
-                        <option value="Autre revenu">
+                        <option value="Gratification">
+                        <option value="Travail indépendant">
+                        <option value="Mission conseil">
+                        <option value="Rendements">
+                        <option value="Location encaissée">
+                        <option value="Récupération">
+                        <option value="Cession">
+                        <option value="Don reçu">
+                        <option value="Bénéfices">
+                        <option value="Allocation">
+                        <option value="Subvention">
+                        <option value="Autre gain">
                     </datalist>
                 </div>
                 
@@ -89,28 +89,28 @@
                     }) }}
                     <div class="form-text-modern">
                         <i class="bi bi-info-circle me-1"></i>
-                        Seules les catégories de revenus sont affichées.
+                        Seuls les types d'entrées sont affichés.
                         <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
-                            Créer une nouvelle catégorie
+                            Définir un nouveau type
                         </a>
                     </div>
                 </div>
                 
                 <div class="alert" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; padding: 1rem;">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    <strong>Attention :</strong> La modification affectera les statistiques de la période associée.
+                    <strong>Prudence :</strong> L'ajustement affectera les analyses de l'intervalle associé.
                 </div>
                 
                 <div class="d-flex gap-3 justify-content-between">
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-outline-danger" style="border-radius: 12px; padding: 0.75rem 1.5rem;" 
                                 data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <i class="bi bi-trash me-2"></i>Supprimer
+                            <i class="bi bi-trash me-2"></i>Effacer
                         </button>
                     </div>
                     <div class="d-flex gap-3">
                         <a href="{{ path('app_income_show', {id: income.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
-                            <i class="bi bi-x me-2"></i>Annuler
+                            <i class="bi bi-x me-2"></i>Abandonner
                         </a>
                         <button type="submit" class="btn-modern btn-success-modern">
                             <i class="bi bi-check-circle me-2"></i>Sauvegarder
@@ -125,7 +125,7 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-calendar-event me-2"></i>Informations de la période
+                    <i class="bi bi-calendar-event me-2"></i>Détails de l'intervalle
                 </h3>
             </div>
             
@@ -147,7 +147,7 @@
                                 <i class="bi bi-arrow-up-circle"></i>
                             </div>
                             <div class="stat-value">{{ totalIncomes|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Revenus</div>
+                            <div class="stat-label">Entrées</div>
                         </div>
                     </div>
                     
@@ -157,7 +157,7 @@
                                 <i class="bi bi-arrow-down-circle"></i>
                             </div>
                             <div class="stat-value">{{ totalExpenses|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Dépenses</div>
+                            <div class="stat-label">Sorties</div>
                         </div>
                     </div>
                     
@@ -167,7 +167,7 @@
                                 <i class="bi bi-{{ balance >= 0 ? 'plus' : 'dash' }}-circle"></i>
                             </div>
                             <div class="stat-value">{{ balance|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Solde</div>
+                            <div class="stat-label">Bilan</div>
                         </div>
                     </div>
                     
@@ -177,7 +177,7 @@
                                 <i class="bi bi-receipt"></i>
                             </div>
                             <div class="stat-value">{{ income.period.incomes|length }}</div>
-                            <div class="stat-label">Transactions</div>
+                            <div class="stat-label">Opérations</div>
                         </div>
                     </div>
                 </div>
@@ -194,7 +194,7 @@
             <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                 <h5 class="modal-title">
                     <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                    Supprimer le revenu
+                    Effacer l'entrée
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>

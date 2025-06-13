@@ -1,25 +1,25 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}Nouveau revenu - Budget Manager{% endblock %}
+{% block title %}Nouvelle entrée - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <h1 class="page-title">Nouveau Revenu 💰</h1>
+    <h1 class="page-title">Nouvelle Entrée 💰</h1>
     <p class="page-subtitle">
         {% if period %}
-            Ajouter un nouveau revenu à la période "{{ period.name }}"
+            Enregistrer une nouvelle entrée à l'intervalle "{{ period.name }}"
         {% else %}
-            Ajouter un nouveau revenu à votre budget
+            Enregistrer une nouvelle entrée à votre budget
         {% endif %}
     </p>
     <div class="d-flex gap-3 flex-wrap">
         {% if period %}
             <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn-modern btn-info-modern">
-                <i class="bi bi-arrow-left"></i>Retour à la période
+                <i class="bi bi-arrow-left"></i>Retour à l'intervalle
             </a>
         {% else %}
             <a href="{{ path('app_income_index') }}" class="btn-modern">
-                <i class="bi bi-arrow-left"></i>Retour aux revenus
+                <i class="bi bi-arrow-left"></i>Retour aux entrées
             </a>
         {% endif %}
     </div>
@@ -32,11 +32,11 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-plus-circle me-2"></i>Créer un revenu
+                    <i class="bi bi-plus-circle me-2"></i>Définir une entrée
                 </h3>
                 <div class="d-flex align-items-center">
                     <span class="badge-modern" style="background: var(--success-gradient); color: white;">
-                        <i class="bi bi-arrow-up-circle me-1"></i>Revenu
+                        <i class="bi bi-arrow-up-circle me-1"></i>Entrée
                     </span>
                 </div>
             </div>
@@ -44,24 +44,24 @@
             {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
                 <div class="form-group-modern">
                     {{ form_row(form.description, {
-                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Prime, Freelance...', 'list': 'income-suggestions'},
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Rémunération, Bonus, Travail indépendant...', 'list': 'income-suggestions'},
                         'label_attr': {'class': 'form-label-modern'}
                     }) }}
                     <datalist id="income-suggestions">
-                        <option value="Salaire">
-                        <option value="Prime">
+                        <option value="Rémunération">
                         <option value="Bonus">
-                        <option value="Freelance">
-                        <option value="Consultance">
-                        <option value="Dividendes">
-                        <option value="Loyer perçu">
-                        <option value="Remboursement">
-                        <option value="Vente">
-                        <option value="Cadeau">
-                        <option value="Intérêts">
-                        <option value="Aide">
-                        <option value="Bourse">
-                        <option value="Autre revenu">
+                        <option value="Gratification">
+                        <option value="Travail indépendant">
+                        <option value="Mission conseil">
+                        <option value="Rendements">
+                        <option value="Location encaissée">
+                        <option value="Récupération">
+                        <option value="Cession">
+                        <option value="Don reçu">
+                        <option value="Bénéfices">
+                        <option value="Allocation">
+                        <option value="Subvention">
+                        <option value="Autre gain">
                     </datalist>
                 </div>
                 
@@ -91,30 +91,30 @@
                     }) }}
                     <div class="form-text-modern">
                         <i class="bi bi-info-circle me-1"></i>
-                        Seules les catégories de revenus sont affichées.
+                        Seuls les types d'entrées sont affichés.
                         <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
-                            Créer une nouvelle catégorie
+                            Définir un nouveau type
                         </a>
                     </div>
                 </div>
                 
                 <div class="alert" style="background: rgba(67, 233, 123, 0.1); color: #43e97b; border: 1px solid rgba(67, 233, 123, 0.2); border-radius: 12px; padding: 1rem;">
                     <i class="bi bi-lightbulb me-2"></i>
-                    <strong>Astuce :</strong> Enregistrez tous vos revenus pour avoir une vue d'ensemble précise de vos finances.
+                    <strong>Conseil :</strong> Enregistrez toutes vos entrées pour avoir une vision globale précise de vos finances.
                 </div>
                 
                 <div class="d-flex gap-3 justify-content-end">
                     {% if period %}
                         <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
-                            <i class="bi bi-x me-2"></i>Annuler
+                            <i class="bi bi-x me-2"></i>Abandonner
                         </a>
                     {% else %}
                         <a href="{{ path('app_income_index') }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
-                            <i class="bi bi-x me-2"></i>Annuler
+                            <i class="bi bi-x me-2"></i>Abandonner
                         </a>
                     {% endif %}
                     <button type="submit" class="btn-modern btn-success-modern">
-                        <i class="bi bi-check-circle me-2"></i>Créer le revenu
+                        <i class="bi bi-check-circle me-2"></i>Enregistrer l'entrée
                     </button>
                 </div>
             {{ form_end(form) }}
@@ -124,39 +124,39 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-zap me-2"></i>Revenus fréquents
+                    <i class="bi bi-zap me-2"></i>Entrées habituelles
                 </h3>
             </div>
             
             <div class="suggestions-grid">
-                <button type="button" class="suggestion-quick income" data-description="Salaire" data-amount="2500">
+                <button type="button" class="suggestion-quick income" data-description="Rémunération" data-amount="2500">
                     <i class="bi bi-briefcase"></i>
                     <div>
-                        <div class="suggestion-title">Salaire</div>
+                        <div class="suggestion-title">Rémunération</div>
                         <div class="suggestion-amount">~2500€</div>
                     </div>
                 </button>
                 
-                <button type="button" class="suggestion-quick income" data-description="Prime" data-amount="500">
+                <button type="button" class="suggestion-quick income" data-description="Bonus" data-amount="500">
                     <i class="bi bi-award"></i>
                     <div>
-                        <div class="suggestion-title">Prime</div>
+                        <div class="suggestion-title">Bonus</div>
                         <div class="suggestion-amount">~500€</div>
                     </div>
                 </button>
                 
-                <button type="button" class="suggestion-quick income" data-description="Freelance" data-amount="800">
+                <button type="button" class="suggestion-quick income" data-description="Travail indépendant" data-amount="800">
                     <i class="bi bi-laptop"></i>
                     <div>
-                        <div class="suggestion-title">Freelance</div>
+                        <div class="suggestion-title">Travail indépendant</div>
                         <div class="suggestion-amount">~800€</div>
                     </div>
                 </button>
                 
-                <button type="button" class="suggestion-quick income" data-description="Remboursement" data-amount="100">
+                <button type="button" class="suggestion-quick income" data-description="Récupération" data-amount="100">
                     <i class="bi bi-arrow-counterclockwise"></i>
                     <div>
-                        <div class="suggestion-title">Remboursement</div>
+                        <div class="suggestion-title">Récupération</div>
                         <div class="suggestion-amount">~100€</div>
                     </div>
                 </button>
