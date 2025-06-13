@@ -57,6 +57,13 @@ class DashboardController extends AbstractController
             ];
         }
         
+        // Calcul de la limite budgétaire (vous pouvez ajuster cette logique)
+        $monthlyBudgetLimit = 3000; // Limite par défaut, peut être configurée par utilisateur
+        if ($totalExpensesAllPeriods > 0) {
+            // Ajuster la limite en function des dépenses + 30% de marge
+            $monthlyBudgetLimit = $totalExpensesAllPeriods * 1.3;
+        }
+        
         return $this->render('dashboard/index.html.twig', [
             'user' => $user,
             'periods' => $periods,
@@ -68,7 +75,9 @@ class DashboardController extends AbstractController
                 'totalIncome' => $totalIncomeAllPeriods,
                 'totalExpenses' => $totalExpensesAllPeriods,
                 'balance' => $globalBalance,
-                'periodsCount' => count($periods)
+                'periodsCount' => count($periods),
+                'budgetLimit' => $monthlyBudgetLimit,
+                'remaining' => max(0, $monthlyBudgetLimit - $totalExpensesAllPeriods)
             ]
         ]);
     }

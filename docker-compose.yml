@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/var/www/html
+      - ./:/var/www/html
     depends_on:
       database:
         condition: service_healthy
@@ -20,7 +20,7 @@ services:
     image: mysql:8.0
     container_name: budget_db
     ports:
-      - "3307:3307"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: budget_db
