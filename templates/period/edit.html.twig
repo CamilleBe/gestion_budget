@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la période - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h2 mb-0">
+                        <i class="bi bi-calendar-event text-primary me-2"></i>
+                        Modifier la période
+                    </h1>
+                    <p class="text-muted">{{ period.name }} ({{ period.startDate|date('d/m/Y') }} - {{ period.endDate|date('d/m/Y') }})</p>
+                </div>
+                <div>
+                    <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil-square"></i>
+                        Informations de la période
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.name, 'Nom de la période', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.name) }}
+                            <div class="form-text">
+                                <i class="bi bi-lightbulb text-warning"></i>
+                                Suggestions : "Janvier 2024", "Trimestre 1 2024", "Budget Vacances"
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form_label(form.startDate, 'Date de début', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                    {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.startDate) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form_label(form.endDate, 'Date de fin', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                    {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.endDate) }}
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Validation des dates en temps réel
+document.addEventListener('DOMContentLoaded', function() {
+    const startDateInput = document.getElementById('period_startDate');
+    const endDateInput = document.getElementById('period_endDate');
+    
+    function validateDates() {
+        if (startDateInput.value && endDateInput.value) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (startDate >= endDate) {
+                endDateInput.setCustomValidity('La date de fin doit être postérieure à la date de début');
+            } else {
+                endDateInput.setCustomValidity('');
+            }
+        }
+    }
+    
+    startDateInput.addEventListener('change', validateDates);
+    endDateInput.addEventListener('change', validateDates);
+});
+</script>
+{% endblock %} 

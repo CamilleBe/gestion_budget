@@ -1,0 +1,59 @@
+# Symfony
+/vendor/
+/var/
+/public/bundles/
+.env.local
+.env.local.php
+.env.*.local
+
+# Composer
+composer.phar
+composer.lock
+
+# PHPUnit
+/phpunit.xml
+.phpunit.result.cache
+
+# Cache and logs
+/var/cache/
+/var/log/
+
+# Docker
+.docker/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node.js (si vous ajoutez du JavaScript plus tard)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+
+# Database
+/data/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Environment variables
+.env.production
+.env.staging 

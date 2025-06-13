@@ -1,0 +1,262 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ period.name }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+{# En-tête de la période #}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="bi bi-calendar-check"></i> {{ period.name }}</h1>
+        <p class="text-muted mb-0">
+            Du {{ period.startDate|date('d/m/Y') }} au {{ period.endDate|date('d/m/Y') }}
+            {% set diff = period.endDate.diff(period.startDate) %}
+            ({{ diff.days + 1 }} jour{{ diff.days > 0 ? 's' : '' }})
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ path('app_period_edit', {id: period.id}) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-pencil"></i> Modifier
+        </a>
+        <a href="{{ path('app_period_index') }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+{# Statistiques de la période #}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card card-income">
+            <div class="card-body text-center">
+                <h3>{{ period.totalIncome|number_format(2, ',', ' ') }}€</h3>
+                <p class="mb-0">Revenus totaux</p>
+                <small>{{ period.incomes|length }} entrée{{ period.incomes|length > 1 ? 's' : '' }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-expense">
+            <div class="card-body text-center">
+                <h3>{{ period.totalExpenses|number_format(2, ',', ' ') }}€</h3>
+                <p class="mb-0">Dépenses totales</p>
+                <small>{{ period.expenses|length }} sortie{{ period.expenses|length > 1 ? 's' : '' }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card {% if period.balance >= 0 %}card-income{% else %}card-expense{% endif %}">
+            <div class="card-body text-center">
+                <h3>{{ period.balance|number_format(2, ',', ' ') }}€</h3>
+                <p class="mb-0">Solde</p>
+                <small>
+                    {% if period.balance >= 0 %}
+                        <i class="bi bi-emoji-smile"></i> Équilibre positif
+                    {% else %}
+                        <i class="bi bi-emoji-frown"></i> Déficit
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Actions rapides #}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-lightning"></i> Actions rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-square"></i> Ajouter un revenu
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-dash-square"></i> Ajouter une dépense
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ path('app_category_index') }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-tags"></i> Gérer les catégories
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <button class="btn btn-outline-warning w-100" disabled>
+                            <i class="bi bi-file-earmark-text"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i> 
+                    Gérez facilement vos finances avec les actions rapides ci-dessus.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Revenus et dépenses #}
+<div class="row">
+    {# Revenus #}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Revenus</h5>
+                <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus"></i> Nouveau
+                </a>
+            </div>
+            <div class="card-body">
+                {% if period.incomes|length > 0 %}
+                    <div class="list-group list-group-flush">
+                        {% for income in period.incomes %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center position-relative">
+                            <div>
+                                <a href="{{ path('app_income_show', {id: income.id}) }}" class="text-decoration-none stretched-link">
+                                    <strong>{{ income.description }}</strong>
+                                </a>
+                                <br>
+                                <small class="text-muted">{{ income.date|date('d/m/Y') }}</small>
+                                {% if income.category %}
+                                    <span class="badge bg-success ms-1">{{ income.category.name }}</span>
+                                {% endif %}
+                            </div>
+                            <span class="text-success fw-bold">+{{ income.amount|number_format(2, ',', ' ') }}€</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Aucun revenu enregistré</p>
+                        <a href="{{ path('app_income_new', {period: period.id}) }}" class="btn btn-outline-success">
+                            <i class="bi bi-plus"></i> Ajouter le premier revenu
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Dépenses #}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-arrow-down-circle"></i> Dépenses</h5>
+                <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus"></i> Nouvelle
+                </a>
+            </div>
+            <div class="card-body">
+                {% if period.expenses|length > 0 %}
+                    <div class="list-group list-group-flush">
+                        {% for expense in period.expenses %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center position-relative">
+                            <div>
+                                <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="text-decoration-none stretched-link">
+                                    <strong>{{ expense.description }}</strong>
+                                </a>
+                                <br>
+                                <small class="text-muted">{{ expense.date|date('d/m/Y') }}</small>
+                                {% if expense.category %}
+                                    <span class="badge bg-danger ms-1">{{ expense.category.name }}</span>
+                                {% endif %}
+                            </div>
+                            <span class="text-danger fw-bold">-{{ expense.amount|number_format(2, ',', ' ') }}€</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Aucune dépense enregistrée</p>
+                        <a href="{{ path('app_expense_new', {period: period.id}) }}" class="btn btn-outline-danger">
+                            <i class="bi bi-plus"></i> Ajouter la première dépense
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Graphique simple (à implémenter plus tard) #}
+{% if period.incomes|length > 0 or period.expenses|length > 0 %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart"></i> Répartition</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <canvas id="budgetChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Analyse de la période</h6>
+                        <ul class="list-unstyled">
+                            {% if period.totalIncome > 0 %}
+                            <li>
+                                <strong>Taux d'épargne :</strong> 
+                                {% set savingsRate = (period.balance / period.totalIncome) * 100 %}
+                                <span class="{% if savingsRate >= 20 %}text-success{% elseif savingsRate >= 10 %}text-warning{% else %}text-danger{% endif %}">
+                                    {{ savingsRate|number_format(1) }}%
+                                </span>
+                            </li>
+                            {% endif %}
+                            <li><strong>Nombre de transactions :</strong> {{ (period.incomes|length + period.expenses|length) }}</li>
+                            {% if period.expenses|length > 0 %}
+                            <li><strong>Dépense moyenne :</strong> {{ (period.totalExpenses / period.expenses|length)|number_format(2, ',', ' ') }}€</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{% if period.incomes|length > 0 or period.expenses|length > 0 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('budgetChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Revenus', 'Dépenses', 'Solde'],
+            datasets: [{
+                data: [
+                    {{ period.totalIncome }},
+                    {{ period.totalExpenses }},
+                    {{ period.balance >= 0 ? period.balance : 0 }}
+                ],
+                backgroundColor: [
+                    '#28a745',
+                    '#dc3545',
+                    '#007bff'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %} 

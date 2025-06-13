@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Budget Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --info-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --bg-color: #f8f9fc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+        }
+
+        .modern-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .nav-brand:hover {
+            color: #667eea;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .stat-card.success::before {
+            background: var(--success-gradient);
+        }
+
+        .stat-card.warning::before {
+            background: var(--warning-gradient);
+        }
+
+        .stat-card.info::before {
+            background: var(--info-gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.primary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .stat-icon.success {
+            background: rgba(79, 172, 254, 0.1);
+            color: #4facfe;
+        }
+
+        .stat-icon.warning {
+            background: rgba(240, 147, 251, 0.1);
+            color: #f093fb;
+        }
+
+        .stat-icon.info {
+            background: rgba(67, 233, 123, 0.1);
+            color: #43e97b;
+        }
+
+        .stat-title {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .chart-section,
+        .activity-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .chart-title,
+        .activity-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .activity-amount {
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-section {
+                padding: 2rem;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation moderne -->
+    <nav class="modern-nav">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ path('app_dashboard') }}" class="nav-brand">
+                    <div class="brand-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    Budget Manager
+                </a>
+
+                <div class="nav-links">
+                    <a href="{{ path('app_dashboard') }}" class="nav-link active">Dashboard</a>
+                    <a href="{{ path('app_period_index') }}" class="nav-link">Périodes</a>
+                    <a href="{{ path('app_income_index') }}" class="nav-link">Revenus</a>
+                    <a href="{{ path('app_expense_index') }}" class="nav-link">Dépenses</a>
+                    <a href="{{ path('app_category_index') }}" class="nav-link">Catégories</a>
+                </div>
+
+                <div class="user-avatar" title="{{ app.user.email }}">
+                    {{ app.user.email|first|upper }}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Container principal -->
+    <div class="dashboard-container">
+        <!-- En-tête avec message de bienvenue -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Bonjour {{ app.user.email|split('@')|first|title }} 👋</h1>
+            <p class="welcome-subtitle">Voici un aperçu de votre situation financière aujourd'hui</p>
+            <div class="quick-actions">
+                <a href="{{ path('app_period_new') }}" class="quick-btn">
+                    <i class="bi bi-plus-circle me-2"></i>Nouvelle période
+                </a>
+                <a href="{{ path('app_income_new') }}" class="quick-btn">
+                    <i class="bi bi-arrow-up-circle me-2"></i>Ajouter revenu
+                </a>
+                <a href="{{ path('app_expense_new') }}" class="quick-btn">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Ajouter dépense
+                </a>
+            </div>
+        </div>
+
+        <!-- Cartes de statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon primary">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div>
+                        <div class="stat-title">Périodes</div>
+                    </div>
+                </div>
+                <div class="stat-value">{{ globalStats.periodsCount|default(0) }}</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up me-1"></i>Actives
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="bi bi-arrow-up-circle"></i>
+                    </div>
+                    <div>
+                        <div class="stat-title">Revenus totaux</div>
+                    </div>
+                </div>
+                <div class="stat-value">{{ globalStats.totalIncome|default(0)|number_format(0, ',', ' ') }}€</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up me-1"></i>Ce mois
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <div class="stat-icon warning">
+                        <i class="bi bi-arrow-down-circle"></i>
+                    </div>
+                    <div>
+                        <div class="stat-title">Dépenses totales</div>
+                    </div>
+                </div>
+                <div class="stat-value">{{ globalStats.totalExpenses|default(0)|number_format(0, ',', ' ') }}€</div>
+                <div class="stat-change negative">
+                    <i class="bi bi-arrow-down me-1"></i>Ce mois
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-header">
+                    <div class="stat-icon info">
+                        <i class="bi bi-wallet"></i>
+                    </div>
+                    <div>
+                        <div class="stat-title">Solde global</div>
+                    </div>
+                </div>
+                <div class="stat-value">{{ globalStats.balance|default(0)|number_format(0, ',', ' ') }}€</div>
+                <div class="stat-change {{ globalStats.balance >= 0 ? 'positive' : 'negative' }}">
+                    <i class="bi bi-{{ globalStats.balance >= 0 ? 'arrow-up' : 'arrow-down' }} me-1"></i>
+                    {{ globalStats.balance >= 0 ? 'Positif' : 'Négatif' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille principale -->
+        <div class="main-grid">
+            <!-- Section graphique -->
+            <div class="chart-section">
+                <h3 class="chart-title">Évolution financière</h3>
+                <canvas id="financialChart" style="height: 300px;"></canvas>
+            </div>
+
+            <!-- Section activités récentes -->
+            <div>
+                <!-- Revenus récents -->
+                <div class="activity-card mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="activity-title mb-0">Revenus récents</h4>
+                        <a href="{{ path('app_income_index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                    </div>
+                    {% if recentIncomes|default([])|length > 0 %}
+                        {% for income in recentIncomes|slice(0, 3) %}
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: var(--success-gradient);">
+                                    <i class="bi bi-plus-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-name">{{ income.description }}</div>
+                                    <div class="activity-date">{{ income.date|date('d/m/Y') }}</div>
+                                </div>
+                                <div class="activity-amount" style="color: #28a745;">
+                                    +{{ income.amount|number_format(0, ',', ' ') }}€
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">Aucun revenu récent</p>
+                    {% endif %}
+                </div>
+
+                <!-- Dépenses récentes -->
+                <div class="activity-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="activity-title mb-0">Dépenses récentes</h4>
+                        <a href="{{ path('app_expense_index') }}" class="btn btn-sm btn-outline-danger">Voir tout</a>
+                    </div>
+                    {% if recentExpenses|default([])|length > 0 %}
+                        {% for expense in recentExpenses|slice(0, 3) %}
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: var(--warning-gradient);">
+                                    <i class="bi bi-dash-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-name">{{ expense.description }}</div>
+                                    <div class="activity-date">{{ expense.date|date('d/m/Y') }}</div>
+                                </div>
+                                <div class="activity-amount" style="color: #dc3545;">
+                                    -{{ expense.amount|number_format(0, ',', ' ') }}€
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">Aucune dépense récente</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Graphique de l'évolution financière
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('financialChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+                    datasets: [{
+                        label: 'Revenus',
+                        data: [{{ globalStats.totalIncome|default(0) }}, 2000, 1800, 2200, 2400, 2600],
+                        borderColor: '#4facfe',
+                        backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Dépenses',
+                        data: [{{ globalStats.totalExpenses|default(0) }}, 1500, 1600, 1400, 1700, 1800],
+                        borderColor: '#f093fb',
+                        backgroundColor: 'rgba(240, 147, 251, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

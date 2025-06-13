@@ -1,0 +1,57 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: budget_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=mysql://budget_user:budget_password@database:3306/budget_db
+    networks:
+      - budget_network
+
+  database:
+    image: mysql:8.0
+    container_name: budget_db
+    ports:
+      - "3307:3307"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: budget_db
+      MYSQL_USER: budget_user
+      MYSQL_PASSWORD: budget_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - budget_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "budget_user", "-pbudget_password"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: budget_phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: database
+      PMA_USER: budget_user
+      PMA_PASSWORD: budget_password
+    depends_on:
+      - database
+    networks:
+      - budget_network
+
+volumes:
+  mysql_data:
+
+networks:
+  budget_network:
+    driver: bridge 

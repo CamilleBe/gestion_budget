@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle catégorie - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-tags"></i> Créer une nouvelle catégorie</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+                        <div class="col-12">
+                            {{ form_row(form.name, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="col-12">
+                            {{ form_row(form.type, {
+                                'attr': {'class': 'form-select'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Astuce :</strong> Les catégories vous aident à organiser et analyser vos finances. Choisissez des noms clairs et précis.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Créer la catégorie
+                                </button>
+                                <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour à la liste
+                                </a>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            
+            {# Suggestions de catégories #}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6><i class="bi bi-lightbulb"></i> Suggestions de catégories</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success">Revenus</h6>
+                            <div class="d-grid gap-1">
+                                <button type="button" class="btn btn-outline-success btn-sm category-suggestion" 
+                                        data-name="Salaire" data-type="INCOME">
+                                    <i class="bi bi-briefcase"></i> Salaire
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-sm category-suggestion" 
+                                        data-name="Freelance" data-type="INCOME">
+                                    <i class="bi bi-laptop"></i> Freelance
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-sm category-suggestion" 
+                                        data-name="Primes" data-type="INCOME">
+                                    <i class="bi bi-award"></i> Primes
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-danger">Dépenses</h6>
+                            <div class="d-grid gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm category-suggestion" 
+                                        data-name="Logement" data-type="EXPENSE">
+                                    <i class="bi bi-house"></i> Logement
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm category-suggestion" 
+                                        data-name="Transport" data-type="EXPENSE">
+                                    <i class="bi bi-car-front"></i> Transport
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm category-suggestion" 
+                                        data-name="Alimentation" data-type="EXPENSE">
+                                    <i class="bi bi-cart"></i> Alimentation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des suggestions de catégories
+    document.querySelectorAll('.category-suggestion').forEach(button => {
+        button.addEventListener('click', function() {
+            const name = this.dataset.name;
+            const type = this.dataset.type;
+            
+            // Remplir les champs du formulaire
+            const nameField = document.getElementById('category_name');
+            const typeField = document.getElementById('category_type');
+            
+            if (nameField) {
+                nameField.value = name;
+                nameField.focus();
+            }
+            
+            if (typeField) {
+                typeField.value = type;
+            }
+            
+            // Effet visuel de sélection
+            document.querySelectorAll('.category-suggestion').forEach(btn => {
+                btn.classList.remove('btn-success', 'btn-danger');
+                if (btn.dataset.type === 'INCOME') {
+                    btn.classList.add('btn-outline-success');
+                } else {
+                    btn.classList.add('btn-outline-danger');
+                }
+            });
+            
+            // Mettre en surbrillance le bouton sélectionné
+            if (type === 'INCOME') {
+                this.classList.remove('btn-outline-success');
+                this.classList.add('btn-success');
+            } else {
+                this.classList.remove('btn-outline-danger');
+                this.classList.add('btn-danger');
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

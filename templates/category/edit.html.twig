@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la catégorie - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h2 mb-0">
+                        <i class="bi bi-tags text-primary me-2"></i>
+                        Modifier la catégorie
+                    </h1>
+                    <p class="text-muted">
+                        {{ category.name }} 
+                        <span class="badge bg-{{ category.type.value == 'INCOME' ? 'success' : 'danger' }}">
+                            {{ category.type.value == 'INCOME' ? 'Revenus' : 'Dépenses' }}
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil-square"></i>
+                        Informations de la catégorie
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.name, 'Nom de la catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'list': 'category-suggestions'}}) }}
+                            {{ form_errors(form.name) }}
+                            <datalist id="category-suggestions">
+                                <!-- Suggestions pour les revenus -->
+                                <option value="Salaire">
+                                <option value="Freelance">
+                                <option value="Investissements">
+                                <option value="Revenus locatifs">
+                                <option value="Primes">
+                                <option value="Autres revenus">
+                                <!-- Suggestions pour les dépenses -->
+                                <option value="Alimentation">
+                                <option value="Transport">
+                                <option value="Logement">
+                                <option value="Santé">
+                                <option value="Loisirs">
+                                <option value="Vêtements">
+                                <option value="Éducation">
+                                <option value="Utilities">
+                                <option value="Assurances">
+                                <option value="Autres dépenses">
+                            </datalist>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.type, 'Type de catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+                            {{ form_errors(form.type) }}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Attention :</strong> Modifier le type peut affecter l'affichage des revenus/dépenses existants.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.description, 'Description (optionnel)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        {% if category.incomes|length > 0 or category.expenses|length > 0 %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Cette catégorie est utilisée :</strong>
+                            <ul class="mb-0">
+                                {% if category.incomes|length > 0 %}
+                                    <li>{{ category.incomes|length }} revenu{{ category.incomes|length > 1 ? 's' : '' }}</li>
+                                {% endif %}
+                                {% if category.expenses|length > 0 %}
+                                    <li>{{ category.expenses|length }} dépense{{ category.expenses|length > 1 ? 's' : '' }}</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mise à jour des suggestions selon le type sélectionné
+    const typeSelect = document.getElementById('category_type');
+    const nameInput = document.getElementById('category_name');
+    const datalist = document.getElementById('category-suggestions');
+    
+    if (typeSelect && nameInput && datalist) {
+        typeSelect.addEventListener('change', function() {
+            const isIncome = this.value === 'INCOME';
+            datalist.innerHTML = '';
+            
+            const suggestions = isIncome 
+                ? ['Salaire', 'Freelance', 'Investissements', 'Revenus locatifs', 'Primes', 'Autres revenus']
+                : ['Alimentation', 'Transport', 'Logement', 'Santé', 'Loisirs', 'Vêtements', 'Éducation', 'Utilities', 'Assurances', 'Autres dépenses'];
+            
+            suggestions.forEach(suggestion => {
+                const option = document.createElement('option');
+                option.value = suggestion;
+                datalist.appendChild(option);
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 

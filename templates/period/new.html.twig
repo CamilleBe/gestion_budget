@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle période - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-calendar-plus"></i> Créer une nouvelle période</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+                        <div class="col-12">
+                            {{ form_row(form.name, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            {{ form_row(form.startDate, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            {{ form_row(form.endDate, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Conseil :</strong> Choisissez une période cohérente (par exemple un mois, un trimestre) pour mieux organiser votre budget.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle"></i> Créer la période
+                                </button>
+                                <a href="{{ path('app_period_index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour à la liste
+                                </a>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            
+            {# Suggestions de périodes courantes #}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6><i class="bi bi-lightbulb"></i> Suggestions de périodes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100 period-suggestion" 
+                                    data-name="Janvier {{ 'now'|date('Y') }}" 
+                                    data-start="{{ 'first day of this month'|date('Y-m-d') }}" 
+                                    data-end="{{ 'last day of this month'|date('Y-m-d') }}">
+                                <i class="bi bi-calendar-month"></i> Mois actuel
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-outline-primary btn-sm mb-2 w-100 period-suggestion" 
+                                    data-name="Trimestre {{ 'now'|date('Y') }}" 
+                                    data-start="{{ 'first day of january this year'|date('Y-m-d') }}" 
+                                    data-end="{{ 'last day of march this year'|date('Y-m-d') }}">
+                                <i class="bi bi-calendar3"></i> Trimestre actuel
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-outline-info btn-sm mb-2 w-100 period-suggestion" 
+                                    data-name="Mois prochain" 
+                                    data-start="{{ 'first day of next month'|date('Y-m-d') }}" 
+                                    data-end="{{ 'last day of next month'|date('Y-m-d') }}">
+                                <i class="bi bi-arrow-right-circle"></i> Mois prochain
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-outline-secondary btn-sm mb-2 w-100 period-suggestion" 
+                                    data-name="Année {{ 'now'|date('Y') }}" 
+                                    data-start="{{ 'first day of january this year'|date('Y-m-d') }}" 
+                                    data-end="{{ 'last day of december this year'|date('Y-m-d') }}">
+                                <i class="bi bi-calendar4-range"></i> Année complète
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des suggestions de périodes
+    document.querySelectorAll('.period-suggestion').forEach(button => {
+        button.addEventListener('click', function() {
+            const name = this.dataset.name;
+            const startDate = this.dataset.start;
+            const endDate = this.dataset.end;
+            
+            // Remplir les champs du formulaire
+            document.getElementById('period_name').value = name;
+            document.getElementById('period_startDate').value = startDate;
+            document.getElementById('period_endDate').value = endDate;
+            
+            // Effet visuel de sélection
+            document.querySelectorAll('.period-suggestion').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+        });
+    });
+    
+    // Validation en temps réel des dates
+    const startDateInput = document.getElementById('period_startDate');
+    const endDateInput = document.getElementById('period_endDate');
+    
+    function validateDates() {
+        if (startDateInput.value && endDateInput.value) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (endDate <= startDate) {
+                endDateInput.setCustomValidity('La date de fin doit être postérieure à la date de début');
+            } else {
+                endDateInput.setCustomValidity('');
+            }
+        }
+    }
+    
+    startDateInput.addEventListener('change', validateDates);
+    endDateInput.addEventListener('change', validateDates);
+});
+</script>
+{% endblock %} 
