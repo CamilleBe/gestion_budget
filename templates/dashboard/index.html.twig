@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Budget Manager</title>
+    <title>Tableau de bord - Gestionnaire Budget</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -413,15 +413,15 @@
                     <div class="brand-icon">
                         <i class="bi bi-wallet2"></i>
                     </div>
-                    Budget Manager
+                    Gestionnaire Budget
                 </a>
 
                 <div class="nav-links">
-                    <a href="{{ path('app_dashboard') }}" class="nav-link active">Dashboard</a>
-                    <a href="{{ path('app_period_index') }}" class="nav-link">Périodes</a>
-                    <a href="{{ path('app_income_index') }}" class="nav-link">Revenus</a>
-                    <a href="{{ path('app_expense_index') }}" class="nav-link">Dépenses</a>
-                    <a href="{{ path('app_category_index') }}" class="nav-link">Catégories</a>
+                    <a href="{{ path('app_dashboard') }}" class="nav-link active">Tableau de bord</a>
+                    <a href="{{ path('app_period_index') }}" class="nav-link">Intervalles</a>
+                    <a href="{{ path('app_income_index') }}" class="nav-link">Entrées</a>
+                    <a href="{{ path('app_expense_index') }}" class="nav-link">Sorties</a>
+                    <a href="{{ path('app_category_index') }}" class="nav-link">Types</a>
                 </div>
 
                 <div class="user-avatar" title="{{ app.user.email }}">
@@ -435,17 +435,17 @@
     <div class="dashboard-container">
         <!-- En-tête avec message de bienvenue -->
         <div class="welcome-section">
-            <h1 class="welcome-title">Bonjour {{ app.user.email|split('@')|first|title }} 👋</h1>
-            <p class="welcome-subtitle">Voici un aperçu de votre situation financière aujourd'hui</p>
+            <h1 class="welcome-title">Salut {{ app.user.email|split('@')|first|title }} 👋</h1>
+            <p class="welcome-subtitle">Découvrez un résumé de votre état financier actuel</p>
             <div class="quick-actions">
                 <a href="{{ path('app_period_new') }}" class="quick-btn">
-                    <i class="bi bi-plus-circle me-2"></i>Nouvelle période
+                    <i class="bi bi-plus-circle me-2"></i>Nouvel intervalle
                 </a>
                 <a href="{{ path('app_income_new') }}" class="quick-btn">
-                    <i class="bi bi-arrow-up-circle me-2"></i>Ajouter revenu
+                    <i class="bi bi-arrow-up-circle me-2"></i>Enregistrer entrée
                 </a>
                 <a href="{{ path('app_expense_new') }}" class="quick-btn">
-                    <i class="bi bi-arrow-down-circle me-2"></i>Ajouter dépense
+                    <i class="bi bi-arrow-down-circle me-2"></i>Enregistrer sortie
                 </a>
             </div>
         </div>
@@ -458,12 +458,12 @@
                         <i class="bi bi-calendar3"></i>
                     </div>
                     <div>
-                        <div class="stat-title">Périodes</div>
+                        <div class="stat-title">Intervalles</div>
                     </div>
                 </div>
                 <div class="stat-value">{{ globalStats.periodsCount|default(0) }}</div>
                 <div class="stat-change positive">
-                    <i class="bi bi-arrow-up me-1"></i>Actives
+                    <i class="bi bi-arrow-up me-1"></i>En cours
                 </div>
             </div>
 
@@ -473,12 +473,12 @@
                         <i class="bi bi-arrow-up-circle"></i>
                     </div>
                     <div>
-                        <div class="stat-title">Revenus totaux</div>
+                        <div class="stat-title">Entrées globales</div>
                     </div>
                 </div>
                 <div class="stat-value">{{ globalStats.totalIncome|default(0)|number_format(0, ',', ' ') }}€</div>
                 <div class="stat-change positive">
-                    <i class="bi bi-arrow-up me-1"></i>Ce mois
+                    <i class="bi bi-arrow-up me-1"></i>Cette période
                 </div>
             </div>
 
@@ -488,12 +488,12 @@
                         <i class="bi bi-arrow-down-circle"></i>
                     </div>
                     <div>
-                        <div class="stat-title">Dépenses totales</div>
+                        <div class="stat-title">Sorties globales</div>
                     </div>
                 </div>
                 <div class="stat-value">{{ globalStats.totalExpenses|default(0)|number_format(0, ',', ' ') }}€</div>
                 <div class="stat-change negative">
-                    <i class="bi bi-arrow-down me-1"></i>Ce mois
+                    <i class="bi bi-arrow-down me-1"></i>Cette période
                 </div>
             </div>
 
@@ -503,13 +503,13 @@
                         <i class="bi bi-wallet"></i>
                     </div>
                     <div>
-                        <div class="stat-title">Solde global</div>
+                        <div class="stat-title">Bilan général</div>
                     </div>
                 </div>
                 <div class="stat-value">{{ globalStats.balance|default(0)|number_format(0, ',', ' ') }}€</div>
                 <div class="stat-change {{ globalStats.balance >= 0 ? 'positive' : 'negative' }}">
                     <i class="bi bi-{{ globalStats.balance >= 0 ? 'arrow-up' : 'arrow-down' }} me-1"></i>
-                    {{ globalStats.balance >= 0 ? 'Positif' : 'Négatif' }}
+                    {{ globalStats.balance >= 0 ? 'Excédent' : 'Déficit' }}
                 </div>
             </div>
         </div>
@@ -518,23 +518,23 @@
         <div class="main-grid">
             <!-- Section graphique -->
             <div class="chart-section">
-                <h3 class="chart-title">Budget</h3>
+                <h3 class="chart-title">Enveloppe budgétaire</h3>
                 <div class="budget-chart-container">
                     <div class="budget-chart">
                         <canvas id="budgetCircleChart" width="300" height="300"></canvas>
                         <div class="budget-center">
                             <div class="budget-amount">€{{ globalStats.totalExpenses|default(0)|number_format(0, ',', ' ') }}</div>
-                            <div class="budget-label">Dépensé</div>
+                            <div class="budget-label">Utilisé</div>
                         </div>
                     </div>
                     <div class="budget-details">
                         <div class="budget-limit">
                             <div class="budget-value">€{{ globalStats.budgetLimit|default(3000)|number_format(0, ',', ' ') }}</div>
-                            <div class="budget-desc">Limite mensuelle</div>
+                            <div class="budget-desc">Plafond mensuel</div>
                         </div>
                         <div class="budget-remaining">
                             <div class="budget-value">€{{ globalStats.remaining|default(2000)|number_format(0, ',', ' ') }}</div>
-                            <div class="budget-desc">Restant</div>
+                            <div class="budget-desc">Disponible</div>
                         </div>
                     </div>
                 </div>
@@ -542,11 +542,11 @@
 
             <!-- Section activités récentes -->
             <div>
-                <!-- Revenus récents -->
+                <!-- Entrées récentes -->
                 <div class="activity-card mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="activity-title mb-0">Revenus récents</h4>
-                        <a href="{{ path('app_income_index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                        <h4 class="activity-title mb-0">Entrées récentes</h4>
+                        <a href="{{ path('app_income_index') }}" class="btn btn-sm btn-outline-primary">Consulter tout</a>
                     </div>
                     {% if recentIncomes|default([])|length > 0 %}
                         {% for income in recentIncomes|slice(0, 3) %}
@@ -564,15 +564,15 @@
                             </div>
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted text-center py-3">Aucun revenu récent</p>
+                        <p class="text-muted text-center py-3">Aucune entrée récente</p>
                     {% endif %}
                 </div>
 
-                <!-- Dépenses récentes -->
+                <!-- Sorties récentes -->
                 <div class="activity-card">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="activity-title mb-0">Dépenses récentes</h4>
-                        <a href="{{ path('app_expense_index') }}" class="btn btn-sm btn-outline-danger">Voir tout</a>
+                        <h4 class="activity-title mb-0">Sorties récentes</h4>
+                        <a href="{{ path('app_expense_index') }}" class="btn btn-sm btn-outline-danger">Consulter tout</a>
                     </div>
                     {% if recentExpenses|default([])|length > 0 %}
                         {% for expense in recentExpenses|slice(0, 3) %}
@@ -590,7 +590,7 @@
                             </div>
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted text-center py-3">Aucune dépense récente</p>
+                        <p class="text-muted text-center py-3">Aucune sortie récente</p>
                     {% endif %}
                 </div>
             </div>
@@ -601,7 +601,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Graphique circulaire du budget
+        // Graphique circulaire de l'enveloppe budgétaire
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('budgetCircleChart').getContext('2d');
             
@@ -615,8 +615,8 @@
                     datasets: [{
                         data: [totalExpenses, remaining],
                         backgroundColor: [
-                            '#ff8c42', // Orange pour les dépenses
-                            '#e5e5e5'  // Gris clair pour le restant
+                            '#ff8c42', // Orange pour les sorties
+                            '#e5e5e5'  // Gris clair pour le disponible
                         ],
                         borderWidth: 0,
                         cutout: '75%' // Pour créer l'effet doughnut
