@@ -1,19 +1,19 @@
 {% extends 'base_modern.html.twig' %}
 
-{% block title %}Modifier {{ expense.description }} - Budget Manager{% endblock %}
+{% block title %}Éditer {{ expense.description }} - Gestionnaire Budget{% endblock %}
 
 {% block header %}
 <div class="page-header">
-    <h1 class="page-title">Modifier la Dépense ✏️</h1>
+    <h1 class="page-title">Éditer la Sortie ✏️</h1>
     <p class="page-subtitle">
         Modification de "{{ expense.description }}" - {{ expense.amount|number_format(2, ',', ' ') }}€
     </p>
     <div class="d-flex gap-3 flex-wrap">
         <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="btn-modern btn-info-modern">
-            <i class="bi bi-eye"></i>Voir la dépense
+            <i class="bi bi-eye"></i>Consulter la sortie
         </a>
         <a href="{{ path('app_expense_index') }}" class="btn-modern">
-            <i class="bi bi-arrow-left"></i>Retour aux dépenses
+            <i class="bi bi-arrow-left"></i>Retour aux sorties
         </a>
     </div>
 </div>
@@ -25,11 +25,11 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-pencil me-2"></i>Modifier la dépense
+                    <i class="bi bi-pencil me-2"></i>Ajuster la sortie
                 </h3>
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
-                        <i class="bi bi-arrow-down-circle me-1"></i>Dépense
+                        <i class="bi bi-arrow-down-circle me-1"></i>Sortie
                     </span>
                     {% if expense.period %}
                         <span class="badge-modern" style="background: var(--primary-gradient); color: white;">
@@ -42,26 +42,26 @@
             {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
                 <div class="form-group-modern">
                     {{ form_row(form.description, {
-                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Courses, Restaurant, Essence...', 'list': 'expense-suggestions'},
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Achats, Repas, Carburant...', 'list': 'expense-suggestions'},
                         'label_attr': {'class': 'form-label-modern'}
                     }) }}
                     <datalist id="expense-suggestions">
-                        <option value="Courses alimentaires">
-                        <option value="Restaurant">
-                        <option value="Essence">
-                        <option value="Transport en commun">
-                        <option value="Électricité">
-                        <option value="Eau">
-                        <option value="Internet">
-                        <option value="Téléphone">
-                        <option value="Assurance">
-                        <option value="Santé">
-                        <option value="Médicaments">
-                        <option value="Vêtements">
-                        <option value="Loisirs">
-                        <option value="Sport">
-                        <option value="Streaming">
-                        <option value="Autre dépense">
+                        <option value="Achats alimentaires">
+                        <option value="Repas restaurant">
+                        <option value="Carburant">
+                        <option value="Transports publics">
+                        <option value="Facture électricité">
+                        <option value="Facture eau">
+                        <option value="Abonnement internet">
+                        <option value="Forfait téléphone">
+                        <option value="Prime assurance">
+                        <option value="Frais médicaux">
+                        <option value="Produits pharmaceutiques">
+                        <option value="Habits">
+                        <option value="Divertissements">
+                        <option value="Activités sportives">
+                        <option value="Services streaming">
+                        <option value="Autre sortie">
                     </datalist>
                 </div>
                 
@@ -91,28 +91,28 @@
                     }) }}
                     <div class="form-text-modern">
                         <i class="bi bi-info-circle me-1"></i>
-                        Seules les catégories de dépenses sont affichées.
+                        Seuls les types de sorties sont affichés.
                         <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
-                            Créer une nouvelle catégorie
+                            Définir un nouveau type
                         </a>
                     </div>
                 </div>
                 
                 <div class="alert" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; padding: 1rem;">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    <strong>Attention :</strong> La modification affectera les statistiques de la période associée.
+                    <strong>Prudence :</strong> L'ajustement affectera les analyses de l'intervalle associé.
                 </div>
                 
                 <div class="d-flex gap-3 justify-content-between">
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-outline-danger" style="border-radius: 12px; padding: 0.75rem 1.5rem;" 
                                 data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <i class="bi bi-trash me-2"></i>Supprimer
+                            <i class="bi bi-trash me-2"></i>Effacer
                         </button>
                     </div>
                     <div class="d-flex gap-3">
                         <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
-                            <i class="bi bi-x me-2"></i>Annuler
+                            <i class="bi bi-x me-2"></i>Abandonner
                         </a>
                         <button type="submit" class="btn-modern btn-warning-modern">
                             <i class="bi bi-check-circle me-2"></i>Sauvegarder
@@ -127,7 +127,7 @@
         <div class="modern-card">
             <div class="card-header-modern">
                 <h3 class="card-title-modern">
-                    <i class="bi bi-calendar-event me-2"></i>Informations de la période
+                    <i class="bi bi-calendar-event me-2"></i>Détails de l'intervalle
                 </h3>
             </div>
             
@@ -149,7 +149,7 @@
                                 <i class="bi bi-arrow-up-circle"></i>
                             </div>
                             <div class="stat-value">{{ totalIncomes|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Revenus</div>
+                            <div class="stat-label">Entrées</div>
                         </div>
                     </div>
                     
@@ -159,7 +159,7 @@
                                 <i class="bi bi-arrow-down-circle"></i>
                             </div>
                             <div class="stat-value">{{ totalExpenses|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Dépenses</div>
+                            <div class="stat-label">Sorties</div>
                         </div>
                     </div>
                     
@@ -169,7 +169,7 @@
                                 <i class="bi bi-{{ balance >= 0 ? 'plus' : 'dash' }}-circle"></i>
                             </div>
                             <div class="stat-value">{{ balance|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Solde</div>
+                            <div class="stat-label">Bilan</div>
                         </div>
                     </div>
                     
@@ -179,7 +179,7 @@
                                 <i class="bi bi-receipt"></i>
                             </div>
                             <div class="stat-value">{{ expense.period.expenses|length }}</div>
-                            <div class="stat-label">Transactions</div>
+                            <div class="stat-label">Opérations</div>
                         </div>
                     </div>
                 </div>
@@ -196,7 +196,7 @@
             <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                 <h5 class="modal-title">
                     <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                    Supprimer la dépense
+                    Effacer la sortie
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
