@@ -1,107 +1,317 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}Modifier la dépense - {{ parent() }}{% endblock %}
+{% block title %}Modifier {{ expense.description }} - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Modifier la Dépense ✏️</h1>
+    <p class="page-subtitle">
+        Modification de "{{ expense.description }}" - {{ expense.amount|number_format(2, ',', ' ') }}€
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="btn-modern btn-info-modern">
+            <i class="bi bi-eye"></i>Voir la dépense
+        </a>
+        <a href="{{ path('app_expense_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux dépenses
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0">
-                        <i class="bi bi-arrow-down-circle text-danger me-2"></i>
-                        Modifier la dépense
-                    </h1>
-                    <p class="text-muted">
-                        {{ expense.description }} - {{ expense.amount|number_format(2, ',', ' ') }} €
-                        <br>
-                        <small>Période : {{ expense.period.name }}</small>
-                    </p>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-pencil me-2"></i>Modifier la dépense
+                </h3>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
+                        <i class="bi bi-arrow-down-circle me-1"></i>Dépense
+                    </span>
+                    {% if expense.period %}
+                        <span class="badge-modern" style="background: var(--primary-gradient); color: white;">
+                            <i class="bi bi-calendar-event me-1"></i>{{ expense.period.name }}
+                        </span>
+                    {% endif %}
                 </div>
-                <div>
-                    <a href="{{ path('app_expense_index') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Retour
-                    </a>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                <div class="form-group-modern">
+                    {{ form_row(form.description, {
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Courses, Restaurant, Essence...', 'list': 'expense-suggestions'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
+                    <datalist id="expense-suggestions">
+                        <option value="Courses alimentaires">
+                        <option value="Restaurant">
+                        <option value="Essence">
+                        <option value="Transport en commun">
+                        <option value="Électricité">
+                        <option value="Eau">
+                        <option value="Internet">
+                        <option value="Téléphone">
+                        <option value="Assurance">
+                        <option value="Santé">
+                        <option value="Médicaments">
+                        <option value="Vêtements">
+                        <option value="Loisirs">
+                        <option value="Sport">
+                        <option value="Streaming">
+                        <option value="Autre dépense">
+                    </datalist>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.amount, {
+                                'attr': {'class': 'form-control-modern', 'step': '0.01', 'min': '0.01', 'placeholder': '0.00'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.date, {
+                                'attr': {'class': 'form-control-modern'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group-modern">
+                    {{ form_row(form.category, {
+                        'attr': {'class': 'form-control-modern'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
+                    <div class="form-text-modern">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Seules les catégories de dépenses sont affichées.
+                        <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
+                            Créer une nouvelle catégorie
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="alert" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; padding: 1rem;">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Attention :</strong> La modification affectera les statistiques de la période associée.
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-between">
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-danger" style="border-radius: 12px; padding: 0.75rem 1.5rem;" 
+                                data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Supprimer
+                        </button>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('app_expense_show', {id: expense.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-x me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn-modern btn-warning-modern">
+                            <i class="bi bi-check-circle me-2"></i>Sauvegarder
+                        </button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        
+        <!-- Informations de la période -->
+        {% if expense.period %}
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-calendar-event me-2"></i>Informations de la période
+                </h3>
+            </div>
+            
+            <div class="period-info">
+                <div class="row text-center">
+                    {% set totalIncomes = 0 %}
+                    {% set totalExpenses = 0 %}
+                    {% for income in expense.period.incomes %}
+                        {% set totalIncomes = totalIncomes + income.amount %}
+                    {% endfor %}
+                    {% for periodExpense in expense.period.expenses %}
+                        {% set totalExpenses = totalExpenses + periodExpense.amount %}
+                    {% endfor %}
+                    {% set balance = totalIncomes - totalExpenses %}
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box success">
+                            <div class="stat-icon">
+                                <i class="bi bi-arrow-up-circle"></i>
+                            </div>
+                            <div class="stat-value">{{ totalIncomes|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Revenus</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box danger">
+                            <div class="stat-icon">
+                                <i class="bi bi-arrow-down-circle"></i>
+                            </div>
+                            <div class="stat-value">{{ totalExpenses|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Dépenses</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box {{ balance >= 0 ? 'success' : 'danger' }}">
+                            <div class="stat-icon">
+                                <i class="bi bi-{{ balance >= 0 ? 'plus' : 'dash' }}-circle"></i>
+                            </div>
+                            <div class="stat-value">{{ balance|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Solde</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-box info">
+                            <div class="stat-icon">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                            <div class="stat-value">{{ expense.period.expenses|length }}</div>
+                            <div class="stat-label">Transactions</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
+</div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-pencil-square"></i>
-                        Informations de la dépense
-                    </h5>
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                    Supprimer la dépense
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette dépense ?</p>
+                <div class="alert" style="background: rgba(255, 140, 66, 0.1); color: #ff8c42; border: 1px solid rgba(255, 140, 66, 0.2); border-radius: 12px;">
+                    <strong>Dépense :</strong> {{ expense.description }}<br>
+                    <strong>Montant :</strong> {{ expense.amount|number_format(2, ',', ' ') }}€<br>
+                    <strong>Date :</strong> {{ expense.date|date('d/m/Y') }}
                 </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'list': 'expense-suggestions'}}) }}
-                            {{ form_errors(form.description) }}
-                            <datalist id="expense-suggestions">
-                                <option value="Courses alimentaires">
-                                <option value="Essence">
-                                <option value="Restaurant">
-                                <option value="Électricité">
-                                <option value="Eau">
-                                <option value="Internet">
-                                <option value="Téléphone">
-                                <option value="Assurance">
-                                <option value="Médicaments">
-                                <option value="Vêtements">
-                                <option value="Transport">
-                                <option value="Loisirs">
-                                <option value="Autre dépense">
-                            </datalist>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.amount, 'Montant (€)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            <div class="input-group">
-                                {{ form_widget(form.amount, {'attr': {'class': 'form-control', 'step': '0.01', 'min': '0'}}) }}
-                                <span class="input-group-text">€</span>
-                            </div>
-                            {{ form_errors(form.amount) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.date, 'Date', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.date) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
-                            {{ form_errors(form.category) }}
-                            <div class="form-text">
-                                <i class="bi bi-info-circle"></i>
-                                Seules les catégories de type "Dépenses" sont affichées.
-                                <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
-                                    Créer une nouvelle catégorie
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ path('app_expense_index') }}" class="btn btn-outline-secondary me-md-2">
-                                <i class="bi bi-x-circle"></i> Annuler
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
+                <div class="alert" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px;">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Cette action est irréversible et affectera les statistiques de la période.
                 </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
+                    Annuler
+                </button>
+                <form method="post" action="{{ path('app_expense_delete', {id: expense.id}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ expense.id) }}">
+                    <button class="btn btn-danger" style="border-radius: 12px;">
+                        <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_styles %}
+.period-info {
+    padding: 1rem;
+}
+
+.stat-box {
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.stat-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-box.success {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.stat-box.danger {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.stat-box.info {
+    background: rgba(23, 162, 184, 0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-box.success .stat-icon,
+.stat-box.success .stat-value {
+    color: #28a745;
+}
+
+.stat-box.danger .stat-icon,
+.stat-box.danger .stat-value {
+    color: #dc3545;
+}
+
+.stat-box.info .stat-icon,
+.stat-box.info .stat-value {
+    color: #17a2b8;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.form-text-modern {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .stat-box {
+        padding: 1rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+}
+{% endblock %}
+
+{% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Validation du montant
@@ -109,8 +319,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (amountInput) {
         amountInput.addEventListener('input', function() {
             const value = parseFloat(this.value);
-            if (value < 0) {
-                this.setCustomValidity('Le montant ne peut pas être négatif');
+            if (value <= 0) {
+                this.setCustomValidity('Le montant doit être positif');
             } else {
                 this.setCustomValidity('');
             }
@@ -123,13 +333,39 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.addEventListener('change', function() {
             const selectedDate = new Date(this.value);
             const today = new Date();
-            today.setHours(23, 59, 59, 999); // Fin de journée
+            today.setHours(23, 59, 59, 999);
             
             if (selectedDate > today) {
                 if (!confirm('La date sélectionnée est dans le futur. Êtes-vous sûr de vouloir continuer ?')) {
-                    this.value = '';
+                    // Restaurer la valeur originale
+                    this.value = this.defaultValue;
                 }
             }
+        });
+    }
+    
+    // Animation au focus des champs de formulaire
+    document.querySelectorAll('.form-control-modern').forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Animation pour le bouton de suppression
+    const deleteBtn = document.querySelector('[data-bs-toggle="modal"]');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 5px 15px rgba(220, 53, 69, 0.3)';
+        });
+        
+        deleteBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
         });
     }
 });

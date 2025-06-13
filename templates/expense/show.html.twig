@@ -1,174 +1,542 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}{{ expense.description }} - {{ parent() }}{% endblock %}
+{% block title %}{{ expense.description }} - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">{{ expense.description }} 💳</h1>
+    <p class="page-subtitle">
+        Détail de la dépense du {{ expense.date|date('d/m/Y') }} - {{ expense.amount|number_format(2, ',', ' ') }}€
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_expense_edit', {id: expense.id}) }}" class="btn-modern btn-warning-modern">
+            <i class="bi bi-pencil"></i>Modifier
+        </a>
+        {% if expense.period %}
+            <a href="{{ path('app_period_show', {id: expense.period.id}) }}" class="btn-modern btn-info-modern">
+                <i class="bi bi-calendar-event"></i>Voir la période
+            </a>
+        {% endif %}
+        <a href="{{ path('app_expense_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux dépenses
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0">
-                        <i class="bi bi-arrow-down-circle text-danger me-2"></i>
-                        Détail de la dépense
-                    </h1>
-                    <p class="text-muted">{{ expense.description }}</p>
+<div class="row">
+    <!-- Informations principales -->
+    <div class="col-lg-4">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-info-circle me-2"></i>Informations
+                </h3>
+            </div>
+            
+            <div class="expense-info-section">
+                <div class="info-item">
+                    <div class="info-label">Description</div>
+                    <div class="info-value">{{ expense.description }}</div>
                 </div>
-                <div>
-                    <a href="{{ path('app_period_show', {id: expense.period.id}) }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Retour à la période
-                    </a>
+                
+                <div class="info-item">
+                    <div class="info-label">Montant</div>
+                    <div class="info-value">
+                        <span class="amount-display danger">
+                            -{{ expense.amount|number_format(2, ',', ' ') }}€
+                        </span>
+                    </div>
                 </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Date</div>
+                    <div class="info-value">
+                        <i class="bi bi-calendar3 me-1"></i>
+                        {{ expense.date|date('d/m/Y') }}
+                        <br>
+                        <small class="text-muted">{{ expense.date|date('l', 'Europe/Paris') }}</small>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Catégorie</div>
+                    <div class="info-value">
+                        <a href="{{ path('app_category_show', {id: expense.category.id}) }}" 
+                           class="badge-modern" style="background: var(--warning-gradient); color: white; text-decoration: none;">
+                            <i class="bi bi-tag me-1"></i>{{ expense.category.name }}
+                        </a>
+                    </div>
+                </div>
+                
+                {% if expense.period %}
+                <div class="info-item">
+                    <div class="info-label">Période</div>
+                    <div class="info-value">
+                        <a href="{{ path('app_period_show', {id: expense.period.id}) }}" 
+                           class="badge-modern" style="background: var(--primary-gradient); color: white; text-decoration: none;">
+                            <i class="bi bi-calendar-event me-1"></i>{{ expense.period.name }}
+                        </a>
+                        <br>
+                        <small class="text-muted">
+                            {{ expense.period.startDate|date('d/m/Y') }} - {{ expense.period.endDate|date('d/m/Y') }}
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-gear me-2"></i>Actions
+                </h3>
+            </div>
+            
+            <div class="actions-section">
+                <a href="{{ path('app_expense_edit', {id: expense.id}) }}" class="action-btn warning">
+                    <i class="bi bi-pencil"></i>
+                    <div>
+                        <div class="action-title">Modifier</div>
+                        <div class="action-subtitle">Modifier cette dépense</div>
+                    </div>
+                </a>
+                
+                {% if expense.period %}
+                <a href="{{ path('app_expense_new', {period: expense.period.id}) }}" class="action-btn primary">
+                    <i class="bi bi-plus-circle"></i>
+                    <div>
+                        <div class="action-title">Nouvelle dépense</div>
+                        <div class="action-subtitle">Ajouter à cette période</div>
+                    </div>
+                </a>
+                {% endif %}
+                
+                <button type="button" class="action-btn danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash"></i>
+                    <div>
+                        <div class="action-title">Supprimer</div>
+                        <div class="action-subtitle">Supprimer définitivement</div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-info-circle"></i>
-                        Informations détaillées
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <table class="table table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <th class="text-muted" style="width: 40%;">Description :</th>
-                                        <td class="fw-bold">{{ expense.description }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-muted">Montant :</th>
-                                        <td>
-                                            <span class="h4 text-danger mb-0">
-                                                <i class="bi bi-currency-euro"></i>
-                                                {{ expense.amount|number_format(2, ',', ' ') }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-muted">Date :</th>
-                                        <td>
-                                            <i class="bi bi-calendar3"></i>
-                                            {{ expense.date|date('d/m/Y') }}
-                                            <small class="text-muted">
-                                                ({{ expense.date|date('l', 'Europe/Paris')|trans }})
-                                            </small>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-muted">Catégorie :</th>
-                                        <td>
-                                            <span class="badge bg-danger bg-opacity-75 fs-6">
-                                                <i class="bi bi-tag"></i>
-                                                {{ expense.category.name }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-muted">Période :</th>
-                                        <td>
-                                            <a href="{{ path('app_period_show', {id: expense.period.id}) }}" class="text-decoration-none">
-                                                <i class="bi bi-calendar-event"></i>
-                                                {{ expense.period.name }}
-                                            </a>
-                                            <br>
-                                            <small class="text-muted">
-                                                {{ expense.period.startDate|date('d/m/Y') }} - {{ expense.period.endDate|date('d/m/Y') }}
-                                            </small>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+    
+    <!-- Statistiques et période -->
+    <div class="col-lg-8">
+        {% if expense.period %}
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-bar-chart me-2"></i>Statistiques de la période "{{ expense.period.name }}"
+                </h3>
+            </div>
+            
+            <div class="stats-overview">
+                {% set totalIncomes = 0 %}
+                {% set totalExpenses = 0 %}
+                {% for income in expense.period.incomes %}
+                    {% set totalIncomes = totalIncomes + income.amount %}
+                {% endfor %}
+                {% for periodExpense in expense.period.expenses %}
+                    {% set totalExpenses = totalExpenses + periodExpense.amount %}
+                {% endfor %}
+                {% set balance = totalIncomes - totalExpenses %}
+                
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card-large success">
+                            <div class="stat-icon">
+                                <i class="bi bi-arrow-up-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">{{ totalIncomes|number_format(0, ',', ' ') }}€</div>
+                                <div class="stat-label">Total revenus</div>
+                                <div class="stat-count">{{ expense.period.incomes|length }} transaction{{ expense.period.incomes|length > 1 ? 's' : '' }}</div>
+                            </div>
                         </div>
-                        <div class="col-md-4 text-center">
-                            <div class="bg-danger bg-opacity-10 rounded p-3">
-                                <i class="bi bi-arrow-down-circle text-danger" style="font-size: 3rem;"></i>
-                                <p class="text-danger fw-bold mb-0 mt-2">DÉPENSE</p>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-card-large danger">
+                            <div class="stat-icon">
+                                <i class="bi bi-arrow-down-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">{{ totalExpenses|number_format(0, ',', ' ') }}€</div>
+                                <div class="stat-label">Total dépenses</div>
+                                <div class="stat-count">{{ expense.period.expenses|length }} transaction{{ expense.period.expenses|length > 1 ? 's' : '' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-card-large {{ balance >= 0 ? 'success' : 'danger' }}">
+                            <div class="stat-icon">
+                                <i class="bi bi-{{ balance >= 0 ? 'plus' : 'dash' }}-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">{{ balance|number_format(0, ',', ' ') }}€</div>
+                                <div class="stat-label">Solde</div>
+                                <div class="stat-count">{{ balance >= 0 ? 'Positif' : 'Négatif' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="stat-card-large info">
+                            <div class="stat-icon">
+                                <i class="bi bi-percent"></i>
+                            </div>
+                            <div class="stat-content">
+                                {% set percentage = totalIncomes > 0 ? ((expense.amount / totalExpenses) * 100) : 0 %}
+                                <div class="stat-value">{{ percentage|number_format(1) }}%</div>
+                                <div class="stat-label">Part de cette dépense</div>
+                                <div class="stat-count">du total</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="bi bi-gear"></i>
-                        Actions
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{{ path('app_expense_edit', {id: expense.id}) }}" class="btn btn-outline-primary">
-                            <i class="bi bi-pencil-square"></i> Modifier
-                        </a>
-                        
-                        <form method="post" action="{{ path('app_expense_delete', {'id': expense.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ expense.id) }}">
-                            <button class="btn btn-outline-danger w-100">
-                                <i class="bi bi-trash"></i> Supprimer
-                            </button>
-                        </form>
-                        
-                        <hr>
-                        
-                        <a href="{{ path('app_expense_index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-list"></i> Toutes les dépenses
-                        </a>
-                        
-                        <a href="{{ path('app_expense_new', {period: expense.period.id}) }}" class="btn btn-outline-danger">
-                            <i class="bi bi-plus-circle"></i> Nouvelle dépense
-                        </a>
-                    </div>
+        
+        <!-- Autres dépenses de la période -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-list me-2"></i>Autres dépenses de cette période
+                </h3>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_expense_new', {period: expense.period.id}) }}" 
+                       class="btn btn-sm btn-outline-danger" style="border-radius: 8px;">
+                        <i class="bi bi-plus"></i>Nouvelle dépense
+                    </a>
                 </div>
             </div>
-
-            <div class="card shadow-sm mt-3">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="bi bi-bar-chart"></i>
-                        Statistiques de la période
-                    </h6>
+            
+            {% set otherExpenses = [] %}
+            {% for periodExpense in expense.period.expenses %}
+                {% if periodExpense.id != expense.id %}
+                    {% set otherExpenses = otherExpenses|merge([periodExpense]) %}
+                {% endif %}
+            {% endfor %}
+            
+            {% if otherExpenses|length > 0 %}
+                <div class="table-modern">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Catégorie</th>
+                                <th>Montant</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for otherExpense in otherExpenses|slice(0, 10) %}
+                            <tr>
+                                <td><strong>{{ otherExpense.description }}</strong></td>
+                                <td>{{ otherExpense.date|date('d/m/Y') }}</td>
+                                <td>
+                                    <span class="badge-modern" style="background: rgba(255, 140, 66, 0.1); color: #ff8c42;">
+                                        {{ otherExpense.category.name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-danger">-{{ otherExpense.amount|number_format(0, ',', ' ') }}€</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ path('app_expense_show', {id: otherExpense.id}) }}" 
+                                           class="btn btn-sm btn-outline-primary" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_expense_edit', {id: otherExpense.id}) }}" 
+                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body">
-                    {% set totalIncomes = 0 %}
-                    {% set totalExpenses = 0 %}
-                    {% for income in expense.period.incomes %}
-                        {% set totalIncomes = totalIncomes + income.amount %}
-                    {% endfor %}
-                    {% for otherExpense in expense.period.expenses %}
-                        {% set totalExpenses = totalExpenses + otherExpense.amount %}
-                    {% endfor %}
-
-                    <div class="mb-3">
-                        <small class="text-muted d-block">Total revenus :</small>
-                        <span class="text-success fw-bold">{{ totalIncomes|number_format(2, ',', ' ') }} €</span>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <small class="text-muted d-block">Total dépenses :</small>
-                        <span class="text-danger fw-bold">{{ totalExpenses|number_format(2, ',', ' ') }} €</span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div>
-                        <small class="text-muted d-block">Solde :</small>
-                        {% set balance = totalIncomes - totalExpenses %}
-                        <span class="fw-bold {{ balance >= 0 ? 'text-success' : 'text-danger' }}">
-                            {{ balance|number_format(2, ',', ' ') }} €
-                        </span>
-                    </div>
+                
+                {% if otherExpenses|length > 10 %}
+                <div class="text-center py-3">
+                    <a href="{{ path('app_period_show', {id: expense.period.id}) }}" class="btn btn-outline-primary">
+                        <i class="bi bi-eye me-2"></i>Voir toutes les dépenses ({{ otherExpenses|length - 10 }} de plus)
+                    </a>
                 </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-receipt display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">Aucune autre dépense</h4>
+                    <p class="text-muted">Cette période ne contient qu'une seule dépense.</p>
+                    <a href="{{ path('app_expense_new', {period: expense.period.id}) }}" class="btn-modern btn-warning-modern">
+                        <i class="bi bi-plus-circle"></i>Ajouter une dépense
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                    Supprimer la dépense
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette dépense ?</p>
+                <div class="alert" style="background: rgba(255, 140, 66, 0.1); color: #ff8c42; border: 1px solid rgba(255, 140, 66, 0.2); border-radius: 12px;">
+                    <strong>Dépense :</strong> {{ expense.description }}<br>
+                    <strong>Montant :</strong> {{ expense.amount|number_format(2, ',', ' ') }}€<br>
+                    <strong>Date :</strong> {{ expense.date|date('d/m/Y') }}<br>
+                    <strong>Catégorie :</strong> {{ expense.category.name }}
+                </div>
+                <div class="alert" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px;">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Cette action est irréversible et affectera les statistiques de la période.
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
+                    Annuler
+                </button>
+                <form method="post" action="{{ path('app_expense_delete', {id: expense.id}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ expense.id) }}">
+                    <button class="btn btn-danger" style="border-radius: 12px;">
+                        <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_styles %}
+.expense-info-section {
+    padding: 0;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6c757d;
+    min-width: 100px;
+}
+
+.info-value {
+    font-weight: 500;
+    color: #2c3e50;
+    text-align: right;
+    flex: 1;
+}
+
+.amount-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.amount-display.danger {
+    color: #dc3545;
+}
+
+.actions-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    color: inherit;
+    text-decoration: none;
+}
+
+.action-btn.warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.action-btn.warning:hover {
+    border-color: rgba(255, 193, 7, 0.3);
+    background: rgba(255, 193, 7, 0.15);
+}
+
+.action-btn.primary {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.action-btn.primary:hover {
+    border-color: rgba(102, 126, 234, 0.3);
+    background: rgba(102, 126, 234, 0.15);
+}
+
+.action-btn.danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.action-btn.danger:hover {
+    border-color: rgba(220, 53, 69, 0.3);
+    background: rgba(220, 53, 69, 0.15);
+}
+
+.action-btn i {
+    font-size: 1.25rem;
+    min-width: 20px;
+}
+
+.action-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.action-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+.stats-overview {
+    padding: 1rem;
+}
+
+.stat-card-large {
+    padding: 2rem 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.stat-card-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-card-large.success {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.stat-card-large.danger {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.stat-card-large.info {
+    background: rgba(23, 162, 184, 0.1);
+}
+
+.stat-card-large .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card-large.success .stat-icon,
+.stat-card-large.success .stat-value {
+    color: #28a745;
+}
+
+.stat-card-large.danger .stat-icon,
+.stat-card-large.danger .stat-value {
+    color: #dc3545;
+}
+
+.stat-card-large.info .stat-icon,
+.stat-card-large.info .stat-value {
+    color: #17a2b8;
+}
+
+.stat-card-large .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card-large .stat-label {
+    font-size: 1rem;
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.stat-card-large .stat-count {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .info-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .info-label {
+        min-width: auto;
+    }
+    
+    .info-value {
+        text-align: left;
+    }
+    
+    .action-btn {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .stat-card-large {
+        padding: 1.5rem 0.75rem;
+    }
+    
+    .stat-card-large .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .stat-card-large .stat-value {
+        font-size: 1.5rem;
+    }
+}
 {% endblock %} 

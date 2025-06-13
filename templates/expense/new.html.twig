@@ -1,117 +1,244 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}Nouvelle dépense - {{ parent() }}{% endblock %}
+{% block title %}Nouvelle dépense - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Nouvelle Dépense 💳</h1>
+    <p class="page-subtitle">
+        {% if period %}
+            Ajouter une nouvelle dépense à la période "{{ period.name }}"
+        {% else %}
+            Ajouter une nouvelle dépense à votre budget
+        {% endif %}
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        {% if period %}
+            <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn-modern btn-info-modern">
+                <i class="bi bi-arrow-left"></i>Retour à la période
+            </a>
+        {% else %}
+            <a href="{{ path('app_expense_index') }}" class="btn-modern">
+                <i class="bi bi-arrow-left"></i>Retour aux dépenses
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0">
-                        <i class="bi bi-arrow-down-circle text-danger me-2"></i>
-                        Nouvelle dépense
-                    </h1>
-                    {% if period %}
-                        <p class="text-muted">Ajouter à la période : {{ period.name }}</p>
-                    {% endif %}
-                </div>
-                <div>
-                    {% if period %}
-                        <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Retour à la période
-                        </a>
-                    {% else %}
-                        <a href="{{ path('app_expense_index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Retour
-                        </a>
-                    {% endif %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-plus-circle me-2"></i>Créer une dépense
+                </h3>
+                <div class="d-flex align-items-center">
+                    <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
+                        <i class="bi bi-arrow-down-circle me-1"></i>Dépense
+                    </span>
                 </div>
             </div>
+
+            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                <div class="form-group-modern">
+                    {{ form_row(form.description, {
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Courses, Restaurant, Essence...', 'list': 'expense-suggestions'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
+                    <datalist id="expense-suggestions">
+                        <option value="Courses alimentaires">
+                        <option value="Restaurant">
+                        <option value="Essence">
+                        <option value="Transport en commun">
+                        <option value="Électricité">
+                        <option value="Eau">
+                        <option value="Internet">
+                        <option value="Téléphone">
+                        <option value="Assurance">
+                        <option value="Santé">
+                        <option value="Médicaments">
+                        <option value="Vêtements">
+                        <option value="Loisirs">
+                        <option value="Sport">
+                        <option value="Streaming">
+                        <option value="Autre dépense">
+                    </datalist>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.amount, {
+                                'attr': {'class': 'form-control-modern', 'step': '0.01', 'min': '0.01', 'placeholder': '0.00'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_row(form.date, {
+                                'attr': {'class': 'form-control-modern'},
+                                'label_attr': {'class': 'form-label-modern'}
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group-modern">
+                    {{ form_row(form.category, {
+                        'attr': {'class': 'form-control-modern'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
+                    <div class="form-text-modern">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Seules les catégories de dépenses sont affichées.
+                        <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
+                            Créer une nouvelle catégorie
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="alert" style="background: rgba(255, 140, 66, 0.1); color: #ff8c42; border: 1px solid rgba(255, 140, 66, 0.2); border-radius: 12px; padding: 1rem;">
+                    <i class="bi bi-lightbulb me-2"></i>
+                    <strong>Astuce :</strong> Soyez précis dans la description pour faciliter le suivi de vos dépenses.
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-end">
+                    {% if period %}
+                        <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-x me-2"></i>Annuler
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_expense_index') }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-x me-2"></i>Annuler
+                        </a>
+                    {% endif %}
+                    <button type="submit" class="btn-modern btn-warning-modern">
+                        <i class="bi bi-check-circle me-2"></i>Créer la dépense
+                    </button>
+                </div>
+            {{ form_end(form) }}
         </div>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-plus-circle"></i>
-                        Informations de la dépense
-                    </h5>
-                </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'list': 'expense-suggestions'}}) }}
-                            {{ form_errors(form.description) }}
-                            <datalist id="expense-suggestions">
-                                <option value="Courses alimentaires">
-                                <option value="Essence">
-                                <option value="Restaurant">
-                                <option value="Électricité">
-                                <option value="Eau">
-                                <option value="Internet">
-                                <option value="Téléphone">
-                                <option value="Assurance">
-                                <option value="Médicaments">
-                                <option value="Vêtements">
-                                <option value="Transport">
-                                <option value="Loisirs">
-                                <option value="Autre dépense">
-                            </datalist>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.amount, 'Montant (€)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            <div class="input-group">
-                                {{ form_widget(form.amount, {'attr': {'class': 'form-control', 'step': '0.01', 'min': '0'}}) }}
-                                <span class="input-group-text">€</span>
-                            </div>
-                            {{ form_errors(form.amount) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.date, 'Date', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.date) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
-                            {{ form_errors(form.category) }}
-                            <div class="form-text">
-                                <i class="bi bi-info-circle"></i>
-                                Seules les catégories de type "Dépenses" sont affichées.
-                                <a href="{{ path('app_category_new') }}" class="text-decoration-none" target="_blank">
-                                    Créer une nouvelle catégorie
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            {% if period %}
-                                <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn btn-outline-secondary me-md-2">
-                                    <i class="bi bi-x-circle"></i> Annuler
-                                </a>
-                            {% else %}
-                                <a href="{{ path('app_expense_index') }}" class="btn btn-outline-secondary me-md-2">
-                                    <i class="bi bi-x-circle"></i> Annuler
-                                </a>
-                            {% endif %}
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-check-circle"></i> Créer la dépense
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
+        
+        <!-- Suggestions rapides -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-zap me-2"></i>Dépenses fréquentes
+                </h3>
+            </div>
+            
+            <div class="suggestions-grid">
+                <button type="button" class="suggestion-quick" data-description="Courses alimentaires" data-amount="50">
+                    <i class="bi bi-cart3"></i>
+                    <div>
+                        <div class="suggestion-title">Courses</div>
+                        <div class="suggestion-amount">~50€</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-quick" data-description="Restaurant" data-amount="25">
+                    <i class="bi bi-cup-straw"></i>
+                    <div>
+                        <div class="suggestion-title">Restaurant</div>
+                        <div class="suggestion-amount">~25€</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-quick" data-description="Essence" data-amount="60">
+                    <i class="bi bi-fuel-pump"></i>
+                    <div>
+                        <div class="suggestion-title">Essence</div>
+                        <div class="suggestion-amount">~60€</div>
+                    </div>
+                </button>
+                
+                <button type="button" class="suggestion-quick" data-description="Transport" data-amount="15">
+                    <i class="bi bi-bus-front"></i>
+                    <div>
+                        <div class="suggestion-title">Transport</div>
+                        <div class="suggestion-amount">~15€</div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_styles %}
+.suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.suggestion-quick {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(255, 140, 66, 0.05);
+    color: #ff8c42;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.suggestion-quick:hover {
+    background: rgba(255, 140, 66, 0.1);
+    border-color: rgba(255, 140, 66, 0.3);
+    transform: translateY(-2px);
+}
+
+.suggestion-quick.selected {
+    background: var(--warning-gradient);
+    color: white;
+    border-color: #ff8c42;
+}
+
+.suggestion-quick i {
+    font-size: 1.5rem;
+    min-width: 24px;
+}
+
+.suggestion-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-amount {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+.form-text-modern {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .suggestions-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .suggestion-quick {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .suggestion-quick i {
+        font-size: 1.25rem;
+    }
+}
+{% endblock %}
+
+{% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Validation du montant
@@ -119,8 +246,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (amountInput) {
         amountInput.addEventListener('input', function() {
             const value = parseFloat(this.value);
-            if (value < 0) {
-                this.setCustomValidity('Le montant ne peut pas être négatif');
+            if (value <= 0) {
+                this.setCustomValidity('Le montant doit être positif');
             } else {
                 this.setCustomValidity('');
             }
@@ -133,15 +260,58 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.addEventListener('change', function() {
             const selectedDate = new Date(this.value);
             const today = new Date();
-            today.setHours(23, 59, 59, 999); // Fin de journée
+            today.setHours(23, 59, 59, 999);
             
             if (selectedDate > today) {
                 if (!confirm('La date sélectionnée est dans le futur. Êtes-vous sûr de vouloir continuer ?')) {
-                    this.value = '';
+                    this.value = new Date().toISOString().split('T')[0];
                 }
             }
         });
     }
+    
+    // Suggestions rapides
+    document.querySelectorAll('.suggestion-quick').forEach(button => {
+        button.addEventListener('click', function() {
+            const description = this.dataset.description;
+            const amount = this.dataset.amount;
+            
+            const descriptionField = document.getElementById('expense_description');
+            const amountField = document.getElementById('expense_amount');
+            
+            if (descriptionField) {
+                descriptionField.value = description;
+                descriptionField.focus();
+            }
+            
+            if (amountField) {
+                amountField.value = amount;
+            }
+            
+            // Animation de sélection
+            document.querySelectorAll('.suggestion-quick').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            this.classList.add('selected');
+            
+            // Animation de succès
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-2px)';
+            }, 150);
+        });
+    });
+    
+    // Animation au focus des champs de formulaire
+    document.querySelectorAll('.form-control-modern').forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
 });
 </script>
 {% endblock %} 
