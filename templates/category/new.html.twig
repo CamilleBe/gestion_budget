@@ -1,92 +1,135 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}Nouvelle catégorie - {{ parent() }}{% endblock %}
+{% block title %}Nouvelle catégorie - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Nouvelle Catégorie 🏷️</h1>
+    <p class="page-subtitle">Créer une nouvelle catégorie pour organiser vos transactions</p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_category_index') }}" class="btn-modern btn-info-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux catégories
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4><i class="bi bi-tags"></i> Créer une nouvelle catégorie</h4>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-plus-circle me-2"></i>Créer une catégorie
+                </h3>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                <div class="form-group-modern">
+                    {{ form_row(form.name, {
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Logement, Transport...'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
                 </div>
-                <div class="card-body">
-                    {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
-                        <div class="col-12">
-                            {{ form_row(form.name, {
-                                'attr': {'class': 'form-control'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-                        
-                        <div class="col-12">
-                            {{ form_row(form.type, {
-                                'attr': {'class': 'form-select'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i>
-                                <strong>Astuce :</strong> Les catégories vous aident à organiser et analyser vos finances. Choisissez des noms clairs et précis.
-                            </div>
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i> Créer la catégorie
-                                </button>
-                                <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left"></i> Retour à la liste
-                                </a>
-                            </div>
-                        </div>
-                    {{ form_end(form) }}
+                
+                <div class="form-group-modern">
+                    {{ form_row(form.type, {
+                        'attr': {'class': 'form-control-modern'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
                 </div>
+                
+                <div class="alert" style="background: rgba(67, 233, 123, 0.1); color: #43e97b; border: 1px solid rgba(67, 233, 123, 0.2); border-radius: 12px; padding: 1rem;">
+                    <i class="bi bi-lightbulb me-2"></i>
+                    <strong>Astuce :</strong> Les catégories vous aident à organiser et analyser vos finances. Choisissez des noms clairs et précis.
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                        <i class="bi bi-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn-modern">
+                        <i class="bi bi-check-circle me-2"></i>Créer la catégorie
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        
+        <!-- Suggestions de catégories -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-lightbulb me-2"></i>Suggestions de catégories
+                </h3>
             </div>
             
-            {# Suggestions de catégories #}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h6><i class="bi bi-lightbulb"></i> Suggestions de catégories</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-success">Revenus</h6>
-                            <div class="d-grid gap-1">
-                                <button type="button" class="btn btn-outline-success btn-sm category-suggestion" 
-                                        data-name="Salaire" data-type="INCOME">
-                                    <i class="bi bi-briefcase"></i> Salaire
-                                </button>
-                                <button type="button" class="btn btn-outline-success btn-sm category-suggestion" 
-                                        data-name="Freelance" data-type="INCOME">
-                                    <i class="bi bi-laptop"></i> Freelance
-                                </button>
-                                <button type="button" class="btn btn-outline-success btn-sm category-suggestion" 
-                                        data-name="Primes" data-type="INCOME">
-                                    <i class="bi bi-award"></i> Primes
-                                </button>
-                            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="suggestion-section">
+                        <h5 class="suggestion-title text-success mb-3">
+                            <i class="bi bi-arrow-up-circle me-2"></i>Revenus
+                        </h5>
+                        <div class="suggestion-grid">
+                            <button type="button" class="suggestion-item income-suggestion" 
+                                    data-name="Salaire" data-type="INCOME">
+                                <i class="bi bi-briefcase"></i>
+                                <span>Salaire</span>
+                            </button>
+                            <button type="button" class="suggestion-item income-suggestion" 
+                                    data-name="Freelance" data-type="INCOME">
+                                <i class="bi bi-laptop"></i>
+                                <span>Freelance</span>
+                            </button>
+                            <button type="button" class="suggestion-item income-suggestion" 
+                                    data-name="Primes" data-type="INCOME">
+                                <i class="bi bi-award"></i>
+                                <span>Primes</span>
+                            </button>
+                            <button type="button" class="suggestion-item income-suggestion" 
+                                    data-name="Investissements" data-type="INCOME">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Investissements</span>
+                            </button>
+                            <button type="button" class="suggestion-item income-suggestion" 
+                                    data-name="Allocations" data-type="INCOME">
+                                <i class="bi bi-piggy-bank"></i>
+                                <span>Allocations</span>
+                            </button>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="text-danger">Dépenses</h6>
-                            <div class="d-grid gap-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm category-suggestion" 
-                                        data-name="Logement" data-type="EXPENSE">
-                                    <i class="bi bi-house"></i> Logement
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-sm category-suggestion" 
-                                        data-name="Transport" data-type="EXPENSE">
-                                    <i class="bi bi-car-front"></i> Transport
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-sm category-suggestion" 
-                                        data-name="Alimentation" data-type="EXPENSE">
-                                    <i class="bi bi-cart"></i> Alimentation
-                                </button>
-                            </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="suggestion-section">
+                        <h5 class="suggestion-title text-danger mb-3">
+                            <i class="bi bi-arrow-down-circle me-2"></i>Dépenses
+                        </h5>
+                        <div class="suggestion-grid">
+                            <button type="button" class="suggestion-item expense-suggestion" 
+                                    data-name="Logement" data-type="EXPENSE">
+                                <i class="bi bi-house"></i>
+                                <span>Logement</span>
+                            </button>
+                            <button type="button" class="suggestion-item expense-suggestion" 
+                                    data-name="Transport" data-type="EXPENSE">
+                                <i class="bi bi-car-front"></i>
+                                <span>Transport</span>
+                            </button>
+                            <button type="button" class="suggestion-item expense-suggestion" 
+                                    data-name="Alimentation" data-type="EXPENSE">
+                                <i class="bi bi-cart"></i>
+                                <span>Alimentation</span>
+                            </button>
+                            <button type="button" class="suggestion-item expense-suggestion" 
+                                    data-name="Santé" data-type="EXPENSE">
+                                <i class="bi bi-heart-pulse"></i>
+                                <span>Santé</span>
+                            </button>
+                            <button type="button" class="suggestion-item expense-suggestion" 
+                                    data-name="Loisirs" data-type="EXPENSE">
+                                <i class="bi bi-controller"></i>
+                                <span>Loisirs</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -96,11 +139,90 @@
 </div>
 {% endblock %}
 
+{% block extra_styles %}
+.suggestion-section {
+    padding: 1rem;
+}
+
+.suggestion-title {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.suggestion-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.income-suggestion {
+    background: rgba(40, 167, 69, 0.05);
+    color: #28a745;
+}
+
+.income-suggestion:hover {
+    background: rgba(40, 167, 69, 0.1);
+    border-color: rgba(40, 167, 69, 0.3);
+    transform: translateY(-2px);
+}
+
+.income-suggestion.selected {
+    background: var(--success-gradient);
+    color: white;
+    border-color: #28a745;
+}
+
+.expense-suggestion {
+    background: rgba(220, 53, 69, 0.05);
+    color: #dc3545;
+}
+
+.expense-suggestion:hover {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.3);
+    transform: translateY(-2px);
+}
+
+.expense-suggestion.selected {
+    background: var(--warning-gradient);
+    color: white;
+    border-color: #dc3545;
+}
+
+.suggestion-item i {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .suggestion-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .suggestion-item {
+        padding: 0.5rem 0.75rem;
+    }
+}
+{% endblock %}
+
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Gestion des suggestions de catégories
-    document.querySelectorAll('.category-suggestion').forEach(button => {
+    document.querySelectorAll('.suggestion-item').forEach(button => {
         button.addEventListener('click', function() {
             const name = this.dataset.name;
             const type = this.dataset.type;
@@ -112,30 +234,39 @@ document.addEventListener('DOMContentLoaded', function() {
             if (nameField) {
                 nameField.value = name;
                 nameField.focus();
+                // Effet de focus moderne
+                nameField.style.borderColor = '#667eea';
+                nameField.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
             }
             
             if (typeField) {
                 typeField.value = type;
             }
             
-            // Effet visuel de sélection
-            document.querySelectorAll('.category-suggestion').forEach(btn => {
-                btn.classList.remove('btn-success', 'btn-danger');
-                if (btn.dataset.type === 'INCOME') {
-                    btn.classList.add('btn-outline-success');
-                } else {
-                    btn.classList.add('btn-outline-danger');
-                }
+            // Retirer la sélection de tous les boutons
+            document.querySelectorAll('.suggestion-item').forEach(btn => {
+                btn.classList.remove('selected');
             });
             
-            // Mettre en surbrillance le bouton sélectionné
-            if (type === 'INCOME') {
-                this.classList.remove('btn-outline-success');
-                this.classList.add('btn-success');
-            } else {
-                this.classList.remove('btn-outline-danger');
-                this.classList.add('btn-danger');
-            }
+            // Ajouter la classe selected au bouton cliqué
+            this.classList.add('selected');
+            
+            // Animation de succès
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-2px)';
+            }, 150);
+        });
+    });
+    
+    // Animation au survol des champs de formulaire
+    document.querySelectorAll('.form-control-modern').forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
         });
     });
 });

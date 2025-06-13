@@ -1,244 +1,456 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}{{ category.name }} - {{ parent() }}{% endblock %}
+{% block title %}{{ category.name }} - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">{{ category.name }} 
+        {% if category.type.value == 'INCOME' %}💰{% else %}💳{% endif %}
+    </h1>
+    <p class="page-subtitle">
+        Détails de la catégorie 
+        {% if category.type.value == 'INCOME' %}de revenus{% else %}de dépenses{% endif %}
+    </p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_category_edit', {id: category.id}) }}" class="btn-modern btn-warning-modern">
+            <i class="bi bi-pencil"></i>Modifier
+        </a>
+        <a href="{{ path('app_category_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux catégories
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0">
-                        <i class="bi bi-tags text-primary me-2"></i>
-                        Détail de la catégorie
-                    </h1>
-                    <p class="text-muted">
-                        {{ category.name }}
-                        <span class="badge bg-{{ category.type.value == 'INCOME' ? 'success' : 'danger' }} ms-2">
-                            {{ category.type.value == 'INCOME' ? 'Revenus' : 'Dépenses' }}
-                        </span>
-                    </p>
+<div class="row">
+    <!-- Informations de la catégorie -->
+    <div class="col-lg-4">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-info-circle me-2"></i>Informations
+                </h3>
+            </div>
+            
+            <div class="category-info-section">
+                <div class="info-item">
+                    <div class="info-label">Nom</div>
+                    <div class="info-value">{{ category.name }}</div>
                 </div>
-                <div>
-                    <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Retour
-                    </a>
+                
+                <div class="info-item">
+                    <div class="info-label">Type</div>
+                    <div class="info-value">
+                        {% if category.type.value == 'INCOME' %}
+                            <span class="badge-modern" style="background: var(--success-gradient); color: white;">
+                                <i class="bi bi-arrow-up-circle me-1"></i>Revenu
+                            </span>
+                        {% else %}
+                            <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
+                                <i class="bi bi-arrow-down-circle me-1"></i>Dépense
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Transactions</div>
+                    <div class="info-value">
+                        {% if category.type.value == 'INCOME' %}
+                            {{ category.incomes|length }} transaction{{ category.incomes|length > 1 ? 's' : '' }}
+                        {% else %}
+                            {{ category.expenses|length }} transaction{{ category.expenses|length > 1 ? 's' : '' }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Montant total</div>
+                    <div class="info-value">
+                        {% set totalAmount = 0 %}
+                        {% if category.type.value == 'INCOME' %}
+                            {% for income in category.incomes %}
+                                {% set totalAmount = totalAmount + income.amount %}
+                            {% endfor %}
+                            <span class="fw-bold text-success">+{{ totalAmount|number_format(0, ',', ' ') }}€</span>
+                        {% else %}
+                            {% for expense in category.expenses %}
+                                {% set totalAmount = totalAmount + expense.amount %}
+                            {% endfor %}
+                            <span class="fw-bold text-danger">-{{ totalAmount|number_format(0, ',', ' ') }}€</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-info-circle"></i>
-                        Informations de la catégorie
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <table class="table table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <th class="text-muted" style="width: 40%;">Nom :</th>
-                                        <td class="fw-bold">{{ category.name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-muted">Type :</th>
-                                        <td>
-                                            <span class="badge bg-{{ category.type.value == 'INCOME' ? 'success' : 'danger' }} fs-6">
-                                                <i class="bi bi-{{ category.type.value == 'INCOME' ? 'arrow-up-circle' : 'arrow-down-circle' }}"></i>
-                                                {{ category.type.value == 'INCOME' ? 'Revenus' : 'Dépenses' }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    {% if category.description %}
-                                    <tr>
-                                        <th class="text-muted">Description :</th>
-                                        <td>{{ category.description }}</td>
-                                    </tr>
-                                    {% endif %}
-                                    <tr>
-                                        <th class="text-muted">Utilisation :</th>
-                                        <td>
-                                            {% set totalUsage = category.incomes|length + category.expenses|length %}
-                                            {% if totalUsage > 0 %}
-                                                <span class="badge bg-info">{{ totalUsage }} utilisation{{ totalUsage > 1 ? 's' : '' }}</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">Non utilisée</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+        
+        <!-- Statistiques -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-graph-up me-2"></i>Statistiques
+                </h3>
+            </div>
+            
+            {% if category.type.value == 'INCOME' and category.incomes|length > 0 %}
+                {% set amounts = [] %}
+                {% for income in category.incomes %}
+                    {% set amounts = amounts|merge([income.amount]) %}
+                {% endfor %}
+                {% set minAmount = min(amounts) %}
+                {% set maxAmount = max(amounts) %}
+                {% set avgAmount = totalAmount / category.incomes|length %}
+                
+                <div class="stats-grid">
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="bi bi-arrow-down"></i>
                         </div>
-                        <div class="col-md-4 text-center">
-                            <div class="bg-primary bg-opacity-10 rounded p-3">
-                                <i class="bi bi-tags text-primary" style="font-size: 3rem;"></i>
-                                <p class="text-primary fw-bold mb-0 mt-2">CATÉGORIE</p>
-                            </div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ minAmount|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Minimum</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="bi bi-arrow-up"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ maxAmount|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Maximum</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="bi bi-calculator"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ avgAmount|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Moyenne</div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Utilisation de la catégorie -->
-            {% if category.incomes|length > 0 or category.expenses|length > 0 %}
-            <div class="card shadow-sm mt-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="bi bi-list-check"></i>
-                        Utilisation de cette catégorie
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% if category.incomes|length > 0 %}
-                        <div class="col-md-6">
-                            <h6 class="text-success mb-3">
-                                <i class="bi bi-arrow-up-circle"></i>
-                                Revenus ({{ category.incomes|length }})
-                            </h6>
-                            <div class="list-group list-group-flush">
-                                {% for income in category.incomes[:5] %}
-                                <div class="list-group-item px-0 py-2 border-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>{{ income.description }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ income.date|date('d/m/Y') }}</small>
-                                        </div>
-                                        <span class="text-success fw-bold">{{ income.amount|number_format(2, ',', ' ') }} €</span>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                {% if category.incomes|length > 5 %}
-                                <div class="list-group-item px-0 py-2 border-0">
-                                    <small class="text-muted">... et {{ category.incomes|length - 5 }} autre{{ category.incomes|length - 5 > 1 ? 's' : '' }}</small>
-                                </div>
-                                {% endif %}
-                            </div>
+            {% elseif category.type.value == 'EXPENSE' and category.expenses|length > 0 %}
+                {% set amounts = [] %}
+                {% for expense in category.expenses %}
+                    {% set amounts = amounts|merge([expense.amount]) %}
+                {% endfor %}
+                {% set minAmount = min(amounts) %}
+                {% set maxAmount = max(amounts) %}
+                {% set avgAmount = totalAmount / category.expenses|length %}
+                
+                <div class="stats-grid">
+                    <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="bi bi-arrow-down"></i>
                         </div>
-                        {% endif %}
-
-                        {% if category.expenses|length > 0 %}
-                        <div class="col-md-6">
-                            <h6 class="text-danger mb-3">
-                                <i class="bi bi-arrow-down-circle"></i>
-                                Dépenses ({{ category.expenses|length }})
-                            </h6>
-                            <div class="list-group list-group-flush">
-                                {% for expense in category.expenses[:5] %}
-                                <div class="list-group-item px-0 py-2 border-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>{{ expense.description }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ expense.date|date('d/m/Y') }}</small>
-                                        </div>
-                                        <span class="text-danger fw-bold">{{ expense.amount|number_format(2, ',', ' ') }} €</span>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                {% if category.expenses|length > 5 %}
-                                <div class="list-group-item px-0 py-2 border-0">
-                                    <small class="text-muted">... et {{ category.expenses|length - 5 }} autre{{ category.expenses|length - 5 > 1 ? 's' : '' }}</small>
-                                </div>
-                                {% endif %}
-                            </div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ minAmount|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Minimum</div>
                         </div>
-                        {% endif %}
+                    </div>
+                    
+                    <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="bi bi-arrow-up"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ maxAmount|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Maximum</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="bi bi-calculator"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">{{ avgAmount|number_format(0, ',', ' ') }}€</div>
+                            <div class="stat-label">Moyenne</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">Aucune donnée disponible</p>
+                </div>
             {% endif %}
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="bi bi-gear"></i>
-                        Actions
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{{ path('app_category_edit', {id: category.id}) }}" class="btn btn-outline-primary">
-                            <i class="bi bi-pencil-square"></i> Modifier
-                        </a>
-                        
-                        {% if category.incomes|length == 0 and category.expenses|length == 0 %}
-                        <form method="post" action="{{ path('app_category_delete', {'id': category.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
-                            <button class="btn btn-outline-danger w-100">
-                                <i class="bi bi-trash"></i> Supprimer
-                            </button>
-                        </form>
-                        {% else %}
-                        <button class="btn btn-outline-danger w-100" disabled title="Cette catégorie est utilisée et ne peut pas être supprimée">
-                            <i class="bi bi-trash"></i> Supprimer
-                        </button>
-                        {% endif %}
-                        
-                        <hr>
-                        
-                        <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-list"></i> Toutes les catégories
-                        </a>
-                        
-                        <a href="{{ path('app_category_new') }}" class="btn btn-outline-primary">
-                            <i class="bi bi-plus-circle"></i> Nouvelle catégorie
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mt-3">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="bi bi-bar-chart"></i>
-                        Statistiques
-                    </h6>
-                </div>
-                <div class="card-body">
+    </div>
+    
+    <!-- Liste des transactions -->
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
                     {% if category.type.value == 'INCOME' %}
-                        {% set totalAmount = 0 %}
-                        {% for income in category.incomes %}
-                            {% set totalAmount = totalAmount + income.amount %}
-                        {% endfor %}
-                        
-                        <div class="mb-3">
-                            <small class="text-muted d-block">Nombre de revenus :</small>
-                            <span class="text-success fw-bold">{{ category.incomes|length }}</span>
-                        </div>
-                        
-                        <div>
-                            <small class="text-muted d-block">Total des revenus :</small>
-                            <span class="text-success fw-bold">{{ totalAmount|number_format(2, ',', ' ') }} €</span>
-                        </div>
+                        <i class="bi bi-arrow-up-circle text-success me-2"></i>Revenus associés
                     {% else %}
-                        {% set totalAmount = 0 %}
-                        {% for expense in category.expenses %}
-                            {% set totalAmount = totalAmount + expense.amount %}
-                        {% endfor %}
-                        
-                        <div class="mb-3">
-                            <small class="text-muted d-block">Nombre de dépenses :</small>
-                            <span class="text-danger fw-bold">{{ category.expenses|length }}</span>
-                        </div>
-                        
-                        <div>
-                            <small class="text-muted d-block">Total des dépenses :</small>
-                            <span class="text-danger fw-bold">{{ totalAmount|number_format(2, ',', ' ') }} €</span>
-                        </div>
+                        <i class="bi bi-arrow-down-circle text-danger me-2"></i>Dépenses associées
+                    {% endif %}
+                </h3>
+                <div class="d-flex gap-2">
+                    {% if category.type.value == 'INCOME' %}
+                        <a href="{{ path('app_income_new') }}" class="btn btn-sm btn-outline-success" style="border-radius: 8px;">
+                            <i class="bi bi-plus"></i>Nouveau revenu
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_expense_new') }}" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;">
+                            <i class="bi bi-plus"></i>Nouvelle dépense
+                        </a>
                     {% endif %}
                 </div>
             </div>
+            
+            {% if category.type.value == 'INCOME' and category.incomes|length > 0 %}
+                <div class="table-modern">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Période</th>
+                                <th>Montant</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for income in category.incomes %}
+                            <tr>
+                                <td><strong>{{ income.description }}</strong></td>
+                                <td>{{ income.date|date('d/m/Y') }}</td>
+                                <td>
+                                    {% if income.period %}
+                                        <a href="{{ path('app_period_show', {id: income.period.id}) }}" 
+                                           class="badge-modern" style="background: var(--primary-gradient); color: white; text-decoration: none;">
+                                            {{ income.period.name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-success">+{{ income.amount|number_format(0, ',', ' ') }}€</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ path('app_income_show', {id: income.id}) }}" 
+                                           class="btn btn-sm btn-outline-primary" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_income_edit', {id: income.id}) }}" 
+                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elseif category.type.value == 'EXPENSE' and category.expenses|length > 0 %}
+                <div class="table-modern">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Période</th>
+                                <th>Montant</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in category.expenses %}
+                            <tr>
+                                <td><strong>{{ expense.description }}</strong></td>
+                                <td>{{ expense.date|date('d/m/Y') }}</td>
+                                <td>
+                                    {% if expense.period %}
+                                        <a href="{{ path('app_period_show', {id: expense.period.id}) }}" 
+                                           class="badge-modern" style="background: var(--primary-gradient); color: white; text-decoration: none;">
+                                            {{ expense.period.name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-danger">-{{ expense.amount|number_format(0, ',', ' ') }}€</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ path('app_expense_show', {id: expense.id}) }}" 
+                                           class="btn btn-sm btn-outline-primary" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_expense_edit', {id: expense.id}) }}" 
+                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        {% if category.type.value == 'INCOME' %}
+                            <i class="bi bi-wallet-fill display-1 text-muted"></i>
+                        {% else %}
+                            <i class="bi bi-credit-card display-1 text-muted"></i>
+                        {% endif %}
+                    </div>
+                    <h4 class="text-muted mb-3">
+                        {% if category.type.value == 'INCOME' %}
+                            Aucun revenu dans cette catégorie
+                        {% else %}
+                            Aucune dépense dans cette catégorie
+                        {% endif %}
+                    </h4>
+                    <p class="text-muted mb-4">
+                        {% if category.type.value == 'INCOME' %}
+                            Commencez par ajouter votre premier revenu dans cette catégorie.
+                        {% else %}
+                            Commencez par ajouter votre première dépense dans cette catégorie.
+                        {% endif %}
+                    </p>
+                    {% if category.type.value == 'INCOME' %}
+                        <a href="{{ path('app_income_new') }}" class="btn-modern btn-success-modern">
+                            <i class="bi bi-plus-circle"></i>Ajouter un revenu
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_expense_new') }}" class="btn-modern btn-warning-modern">
+                            <i class="bi bi-plus-circle"></i>Ajouter une dépense
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_styles %}
+.category-info-section {
+    padding: 0;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.info-value {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-card.success {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.stat-card.danger {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.stat-card.success .stat-icon {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.stat-card.danger .stat-icon {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-card.success .stat-value {
+    color: #28a745;
+}
+
+.stat-card.danger .stat-value {
+    color: #dc3545;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 0.75rem;
+    }
+}
 {% endblock %} 

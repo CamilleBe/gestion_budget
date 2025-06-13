@@ -1,797 +1,295 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Catégories - Budget Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --info-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --bg-color: #f8f9fc;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-color);
-            color: #2c3e50;
-            margin: 0;
-            padding: 0;
-        }
-
-        .modern-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #2c3e50;
-            text-decoration: none;
-        }
-
-        .nav-brand:hover {
-            color: #667eea;
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-gradient);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: #6c757d;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .nav-link.active {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .page-container {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .page-header {
-            background: var(--info-gradient);
-            border-radius: 24px;
-            padding: 3rem;
-            color: white;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse-bg 4s ease-in-out infinite;
-        }
-
-        .page-header::after {
-            content: '';
-            position: absolute;
-            top: 20%;
-            right: 10%;
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float-small 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse-bg {
-            0%, 100% { 
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.3;
-            }
-            50% { 
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 0.1;
-            }
-        }
-
-        @keyframes float-small {
-            0%, 100% { 
-                transform: translateY(0px);
-                opacity: 0.6;
-            }
-            50% { 
-                transform: translateY(-20px);
-                opacity: 1;
-            }
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        .page-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        .header-actions {
-            position: relative;
-            z-index: 10;
-        }
-
-        .btn-modern {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-modern:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .category-section {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.02);
-            overflow: hidden;
-        }
-
-        .section-header {
-            padding: 2rem;
-            position: relative;
-            color: white;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .section-header.income {
-            background: var(--success-gradient);
-        }
-
-        .section-header.expense {
-            background: var(--warning-gradient);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .category-list {
-            padding: 0;
-        }
-
-        .category-item {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: between;
-            align-items: center;
-        }
-
-        .category-item:last-child {
-            border-bottom: none;
-        }
-
-        .category-item:hover {
-            background: rgba(67, 233, 123, 0.02);
-            transform: translateX(5px);
-        }
-
-        .category-info {
-            flex: 1;
-        }
-
-        .category-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.25rem;
-        }
-
-        .category-stats {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .category-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-action {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .btn-view {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .btn-edit {
-            background: rgba(108, 117, 125, 0.1);
-            color: #6c757d;
-        }
-
-        .btn-delete {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
-        .empty-section {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: #6c757d;
-        }
-
-        .empty-icon {
-            font-size: 3rem;
-            color: #e9ecef;
-            margin-bottom: 1rem;
-        }
-
-        .empty-message {
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-create {
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-create.income {
-            background: rgba(79, 172, 254, 0.1);
-            color: #4facfe;
-            border: 1px solid rgba(79, 172, 254, 0.2);
-        }
-
-        .btn-create.expense {
-            background: rgba(240, 147, 251, 0.1);
-            color: #f093fb;
-            border: 1px solid rgba(240, 147, 251, 0.2);
-        }
-
-        .btn-create:hover {
-            transform: translateY(-2px);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            color: #e9ecef;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        .empty-description {
-            color: #adb5bd;
-            margin-bottom: 2rem;
-        }
-
-        .btn-primary-modern {
-            background: var(--info-gradient);
-            border: none;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-modern:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
-            color: white;
-        }
-
-        .suggestions-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .suggestions-title {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-        }
-
-        .suggestions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .suggestion-section h6 {
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .suggestion-section.income h6 {
-            color: #4facfe;
-        }
-
-        .suggestion-section.expense h6 {
-            color: #f093fb;
-        }
-
-        .suggestion-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            color: #6c757d;
-        }
-
-        .suggestion-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-
-        .suggestion-section.income .suggestion-icon {
-            background: rgba(79, 172, 254, 0.1);
-            color: #4facfe;
-        }
-
-        .suggestion-section.expense .suggestion-icon {
-            background: rgba(240, 147, 251, 0.1);
-            color: #f093fb;
-        }
-
-        .modal-content {
-            border-radius: 20px;
-            border: none;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .modal-header {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .page-container {
-                padding: 1rem;
-            }
-
-            .page-header {
-                padding: 2rem;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .category-item:hover {
-                transform: none;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation moderne -->
-    <nav class="modern-nav">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <a href="{{ path('app_dashboard') }}" class="nav-brand">
-                    <div class="brand-icon">
-                        <i class="bi bi-wallet2"></i>
-                    </div>
-                    Budget Manager
-                </a>
-
-                <div class="nav-links">
-                    <a href="{{ path('app_dashboard') }}" class="nav-link">Dashboard</a>
-                    <a href="{{ path('app_period_index') }}" class="nav-link">Périodes</a>
-                    <a href="{{ path('app_income_index') }}" class="nav-link">Revenus</a>
-                    <a href="{{ path('app_expense_index') }}" class="nav-link">Dépenses</a>
-                    <a href="{{ path('app_category_index') }}" class="nav-link active">Catégories</a>
-                </div>
-
-                <div class="user-avatar" title="{{ app.user.email }}">
-                    {{ app.user.email|first|upper }}
-                </div>
+{% extends 'base_modern.html.twig' %}
+
+{% block title %}Catégories - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Mes Catégories 🏷️</h1>
+    <p class="page-subtitle">Organiser vos transactions par catégories</p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_category_new') }}" class="btn-modern">
+            <i class="bi bi-plus-circle"></i>Nouvelle catégorie
+        </a>
+        <a href="{{ path('app_dashboard') }}" class="btn-modern btn-info-modern">
+            <i class="bi bi-graph-up"></i>Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <!-- Catégories de revenus -->
+    <div class="col-lg-6">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-arrow-up-circle text-success me-2"></i>Catégories de revenus
+                </h3>
+                <span class="badge-modern" style="background: var(--success-gradient); color: white;">
+                    {% set incomeCategories = categories|filter(c => c.type.value == 'INCOME') %}
+                    {{ incomeCategories|length }} catégorie{{ incomeCategories|length > 1 ? 's' : '' }}
+                </span>
             </div>
-        </div>
-    </nav>
 
-    <!-- Container principal -->
-    <div class="page-container">
-        <!-- En-tête de la page -->
-        <div class="page-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="page-title">
-                        <i class="bi bi-tags me-3"></i>Mes Catégories
-                    </h1>
-                    <p class="page-subtitle">Organisez vos transactions par catégories</p>
+            {% if incomeCategories|length > 0 %}
+                <div class="category-grid">
+                    {% for category in incomeCategories %}
+                    <div class="category-item income-category">
+                        <div class="category-icon">
+                            <i class="bi bi-arrow-up-circle"></i>
+                        </div>
+                        <div class="category-content">
+                            <h6 class="category-name">{{ category.name }}</h6>
+                            <small class="text-muted">{{ category.incomes|length }} revenu{{ category.incomes|length > 1 ? 's' : '' }}</small>
+                        </div>
+                        <div class="category-actions">
+                            <a href="{{ path('app_category_show', {id: category.id}) }}" 
+                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ path('app_category_edit', {id: category.id}) }}" 
+                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="header-actions">
-                    <a href="{{ path('app_category_new') }}" class="btn-modern">
-                        <i class="bi bi-plus-circle"></i>
-                        Nouvelle catégorie
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-folder-plus text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3 mb-3">Aucune catégorie de revenu</p>
+                    <a href="{{ path('app_category_new') }}" class="btn-modern btn-success-modern btn-sm">
+                        <i class="bi bi-plus"></i>Créer une catégorie
                     </a>
                 </div>
-            </div>
+            {% endif %}
         </div>
-
-        <!-- Contenu principal -->
-        {% if categories|length > 0 %}
-            <div class="categories-grid">
-                <!-- Catégories de revenus -->
-                <div class="category-section">
-                    <div class="section-header income">
-                        <h2 class="section-title">
-                            <div class="section-icon">
-                                <i class="bi bi-arrow-up-circle"></i>
-                            </div>
-                            Catégories de revenus
-                        </h2>
-                    </div>
-                    
-                    {% set incomeCategories = categories|filter(c => c.type.value == 'INCOME') %}
-                    {% if incomeCategories|length > 0 %}
-                        <div class="category-list">
-                            {% for category in incomeCategories %}
-                            <div class="category-item">
-                                <div class="category-info">
-                                    <div class="category-name">{{ category.name }}</div>
-                                    <div class="category-stats">
-                                        {{ category.incomes|length }} revenu{{ category.incomes|length > 1 ? 's' : '' }}
-                                    </div>
-                                </div>
-                                <div class="category-actions">
-                                    <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn-action btn-view">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ path('app_category_edit', {id: category.id}) }}" class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button type="button" class="btn-action btn-delete" 
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="empty-section">
-                            <div class="empty-icon">
-                                <i class="bi bi-inbox"></i>
-                            </div>
-                            <div class="empty-message">Aucune catégorie de revenu</div>
-                            <a href="{{ path('app_category_new') }}" class="btn-create income">
-                                <i class="bi bi-plus"></i>
-                                Créer une catégorie
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Catégories de dépenses -->
-                <div class="category-section">
-                    <div class="section-header expense">
-                        <h2 class="section-title">
-                            <div class="section-icon">
-                                <i class="bi bi-arrow-down-circle"></i>
-                            </div>
-                            Catégories de dépenses
-                        </h2>
-                    </div>
-                    
-                    {% set expenseCategories = categories|filter(c => c.type.value == 'EXPENSE') %}
-                    {% if expenseCategories|length > 0 %}
-                        <div class="category-list">
-                            {% for category in expenseCategories %}
-                            <div class="category-item">
-                                <div class="category-info">
-                                    <div class="category-name">{{ category.name }}</div>
-                                    <div class="category-stats">
-                                        {{ category.expenses|length }} dépense{{ category.expenses|length > 1 ? 's' : '' }}
-                                    </div>
-                                </div>
-                                <div class="category-actions">
-                                    <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn-action btn-view">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ path('app_category_edit', {id: category.id}) }}" class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button type="button" class="btn-action btn-delete" 
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="empty-section">
-                            <div class="empty-icon">
-                                <i class="bi bi-inbox"></i>
-                            </div>
-                            <div class="empty-message">Aucune catégorie de dépense</div>
-                            <a href="{{ path('app_category_new') }}" class="btn-create expense">
-                                <i class="bi bi-plus"></i>
-                                Créer une catégorie
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            {# Modals de suppression #}
-            {% for category in categories %}
-            <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Supprimer la catégorie</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Êtes-vous sûr de vouloir supprimer la catégorie :</p>
-                            <div class="alert alert-info">
-                                <strong>{{ category.name }}</strong> ({{ category.type.label }})<br>
-                                Utilisée par : {{ category.incomes|length + category.expenses|length }} transaction(s)
-                            </div>
-                            {% if category.incomes|length > 0 or category.expenses|length > 0 %}
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle"></i>
-                                    Cette catégorie est utilisée et ne peut pas être supprimée.
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            {% if category.incomes|length == 0 and category.expenses|length == 0 %}
-                            <form method="post" action="{{ path('app_category_delete', {id: category.id}) }}" style="display: inline;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
-                                <button class="btn btn-danger">
-                                    <i class="bi bi-trash"></i> Supprimer
-                                </button>
-                            </form>
-                            {% else %}
-                            <button class="btn btn-danger" disabled>
-                                <i class="bi bi-trash"></i> Impossible de supprimer
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-
-        {% else %}
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <i class="bi bi-tags"></i>
-                </div>
-                <h3 class="empty-title">Aucune catégorie créée</h3>
-                <p class="empty-description">Les catégories vous permettent d'organiser vos revenus et dépenses.</p>
-                <a href="{{ path('app_category_new') }}" class="btn-primary-modern">
-                    <i class="bi bi-plus-circle"></i>
-                    Créer ma première catégorie
-                </a>
-            </div>
-
-            <!-- Suggestions de catégories -->
-            <div class="suggestions-card">
-                <h4 class="suggestions-title">
-                    <i class="bi bi-lightbulb"></i>
-                    Suggestions de catégories
-                </h4>
-                <div class="suggestions-grid">
-                    <div class="suggestion-section income">
-                        <h6>Revenus</h6>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-briefcase"></i>
-                            </div>
-                            Salaire
-                        </div>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-laptop"></i>
-                            </div>
-                            Freelance
-                        </div>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-award"></i>
-                            </div>
-                            Primes
-                        </div>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-piggy-bank"></i>
-                            </div>
-                            Investissements
-                        </div>
-                    </div>
-                    <div class="suggestion-section expense">
-                        <h6>Dépenses</h6>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-house"></i>
-                            </div>
-                            Logement
-                        </div>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-car-front"></i>
-                            </div>
-                            Transport
-                        </div>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-cart"></i>
-                            </div>
-                            Alimentation
-                        </div>
-                        <div class="suggestion-item">
-                            <div class="suggestion-icon">
-                                <i class="bi bi-heart-pulse"></i>
-                            </div>
-                            Santé
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> 
+    <!-- Catégories de dépenses -->
+    <div class="col-lg-6">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-arrow-down-circle text-danger me-2"></i>Catégories de dépenses
+                </h3>
+                <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
+                    {% set expenseCategories = categories|filter(c => c.type.value == 'EXPENSE') %}
+                    {{ expenseCategories|length }} catégorie{{ expenseCategories|length > 1 ? 's' : '' }}
+                </span>
+            </div>
+
+            {% if expenseCategories|length > 0 %}
+                <div class="category-grid">
+                    {% for category in expenseCategories %}
+                    <div class="category-item expense-category">
+                        <div class="category-icon">
+                            <i class="bi bi-arrow-down-circle"></i>
+                        </div>
+                        <div class="category-content">
+                            <h6 class="category-name">{{ category.name }}</h6>
+                            <small class="text-muted">{{ category.expenses|length }} dépense{{ category.expenses|length > 1 ? 's' : '' }}</small>
+                        </div>
+                        <div class="category-actions">
+                            <a href="{{ path('app_category_show', {id: category.id}) }}" 
+                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ path('app_category_edit', {id: category.id}) }}" 
+                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-folder-plus text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3 mb-3">Aucune catégorie de dépense</p>
+                    <a href="{{ path('app_category_new') }}" class="btn-modern btn-warning-modern btn-sm">
+                        <i class="bi bi-plus"></i>Créer une catégorie
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if categories|length > 0 %}
+<div class="modern-card mt-4">
+    <div class="card-header-modern">
+        <h3 class="card-title-modern">
+            <i class="bi bi-list me-2"></i>Toutes les catégories
+        </h3>
+    </div>
+    <div class="table-modern">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-tag me-2"></i>Nom</th>
+                    <th><i class="bi bi-arrow-up-down me-2"></i>Type</th>
+                    <th><i class="bi bi-files me-2"></i>Transactions</th>
+                    <th><i class="bi bi-currency-euro me-2"></i>Total</th>
+                    <th><i class="bi bi-gear me-2"></i>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="category-icon-small me-2">
+                                {% if category.type.value == 'INCOME' %}
+                                    <i class="bi bi-arrow-up-circle text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-arrow-down-circle text-danger"></i>
+                                {% endif %}
+                            </div>
+                            <strong>{{ category.name }}</strong>
+                        </div>
+                    </td>
+                    <td>
+                        {% if category.type.value == 'INCOME' %}
+                            <span class="badge-modern" style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
+                                Revenu
+                            </span>
+                        {% else %}
+                            <span class="badge-modern" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
+                                Dépense
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if category.type.value == 'INCOME' %}
+                            {{ category.incomes|length }} transaction{{ category.incomes|length > 1 ? 's' : '' }}
+                        {% else %}
+                            {{ category.expenses|length }} transaction{{ category.expenses|length > 1 ? 's' : '' }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set totalAmount = 0 %}
+                        {% if category.type.value == 'INCOME' %}
+                            {% for income in category.incomes %}
+                                {% set totalAmount = totalAmount + income.amount %}
+                            {% endfor %}
+                            <span class="fw-bold text-success">+{{ totalAmount|number_format(0, ',', ' ') }}€</span>
+                        {% else %}
+                            {% for expense in category.expenses %}
+                                {% set totalAmount = totalAmount + expense.amount %}
+                            {% endfor %}
+                            <span class="fw-bold text-danger">-{{ totalAmount|number_format(0, ',', ' ') }}€</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_category_show', {id: category.id}) }}" 
+                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ path('app_category_edit', {id: category.id}) }}" 
+                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_styles %}
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.category-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.income-category {
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.income-category:hover {
+    border-color: rgba(40, 167, 69, 0.2);
+}
+
+.expense-category {
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.expense-category:hover {
+    border-color: rgba(220, 53, 69, 0.2);
+}
+
+.category-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.income-category .category-icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.expense-category .category-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.category-content {
+    flex: 1;
+}
+
+.category-name {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.category-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.category-icon-small {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .category-item {
+        padding: 0.75rem;
+    }
+    
+    .category-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 0.75rem;
+    }
+}
+{% endblock %} 

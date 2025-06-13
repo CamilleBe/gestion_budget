@@ -1,137 +1,208 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_modern.html.twig' %}
 
-{% block title %}Modifier la catégorie - {{ parent() }}{% endblock %}
+{% block title %}Modifier {{ category.name }} - Budget Manager{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Modifier la Catégorie ✏️</h1>
+    <p class="page-subtitle">Modifier les informations de la catégorie "{{ category.name }}"</p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn-modern btn-info-modern">
+            <i class="bi bi-eye"></i>Voir la catégorie
+        </a>
+        <a href="{{ path('app_category_index') }}" class="btn-modern">
+            <i class="bi bi-arrow-left"></i>Retour aux catégories
+        </a>
+    </div>
+</div>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0">
-                        <i class="bi bi-tags text-primary me-2"></i>
-                        Modifier la catégorie
-                    </h1>
-                    <p class="text-muted">
-                        {{ category.name }} 
-                        <span class="badge bg-{{ category.type.value == 'INCOME' ? 'success' : 'danger' }}">
-                            {{ category.type.value == 'INCOME' ? 'Revenus' : 'Dépenses' }}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-pencil me-2"></i>Modifier la catégorie
+                </h3>
+                <div class="d-flex align-items-center">
+                    {% if category.type.value == 'INCOME' %}
+                        <span class="badge-modern" style="background: var(--success-gradient); color: white;">
+                            <i class="bi bi-arrow-up-circle me-1"></i>Revenu
                         </span>
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Retour
-                    </a>
+                    {% else %}
+                        <span class="badge-modern" style="background: var(--warning-gradient); color: white;">
+                            <i class="bi bi-arrow-down-circle me-1"></i>Dépense
+                        </span>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-pencil-square"></i>
-                        Informations de la catégorie
-                    </h5>
+            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                <div class="form-group-modern">
+                    {{ form_row(form.name, {
+                        'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Salaire, Logement, Transport...'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
                 </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_label(form.name, 'Nom de la catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'list': 'category-suggestions'}}) }}
-                            {{ form_errors(form.name) }}
-                            <datalist id="category-suggestions">
-                                <!-- Suggestions pour les revenus -->
-                                <option value="Salaire">
-                                <option value="Freelance">
-                                <option value="Investissements">
-                                <option value="Revenus locatifs">
-                                <option value="Primes">
-                                <option value="Autres revenus">
-                                <!-- Suggestions pour les dépenses -->
-                                <option value="Alimentation">
-                                <option value="Transport">
-                                <option value="Logement">
-                                <option value="Santé">
-                                <option value="Loisirs">
-                                <option value="Vêtements">
-                                <option value="Éducation">
-                                <option value="Utilities">
-                                <option value="Assurances">
-                                <option value="Autres dépenses">
-                            </datalist>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.type, 'Type de catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
-                            {{ form_errors(form.type) }}
-                            <div class="form-text">
-                                <i class="bi bi-info-circle"></i>
-                                <strong>Attention :</strong> Modifier le type peut affecter l'affichage des revenus/dépenses existants.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.description, 'Description (optionnel)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 3}}) }}
-                            {{ form_errors(form.description) }}
-                        </div>
-
-                        {% if category.incomes|length > 0 or category.expenses|length > 0 %}
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <strong>Cette catégorie est utilisée :</strong>
-                            <ul class="mb-0">
-                                {% if category.incomes|length > 0 %}
-                                    <li>{{ category.incomes|length }} revenu{{ category.incomes|length > 1 ? 's' : '' }}</li>
-                                {% endif %}
-                                {% if category.expenses|length > 0 %}
-                                    <li>{{ category.expenses|length }} dépense{{ category.expenses|length > 1 ? 's' : '' }}</li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                        {% endif %}
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary me-md-2">
-                                <i class="bi bi-x-circle"></i> Annuler
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                
+                <div class="form-group-modern">
+                    {{ form_row(form.type, {
+                        'attr': {'class': 'form-control-modern'},
+                        'label_attr': {'class': 'form-label-modern'}
+                    }) }}
+                </div>
+                
+                <div class="alert" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; padding: 1rem;">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Attention :</strong> Modifier le type de catégorie peut affecter l'organisation de vos transactions existantes.
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-between">
+                    <div class="d-flex gap-2">
+                        {% if category.incomes|length == 0 and category.expenses|length == 0 %}
+                            <button type="button" class="btn btn-outline-danger" style="border-radius: 12px; padding: 0.75rem 1.5rem;" 
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash me-2"></i>Supprimer
                             </button>
-                        </div>
-                    {{ form_end(form) }}
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-x me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn-modern">
+                            <i class="bi bi-check-circle me-2"></i>Sauvegarder
+                        </button>
+                    </div>
                 </div>
+            {{ form_end(form) }}
+        </div>
+        
+        <!-- Statistiques de la catégorie -->
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h3 class="card-title-modern">
+                    <i class="bi bi-graph-up me-2"></i>Statistiques de la catégorie
+                </h3>
+            </div>
+            
+            <div class="row text-center">
+                {% if category.type.value == 'INCOME' %}
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background: rgba(40, 167, 69, 0.1);">
+                            <h4 class="text-success mb-1">{{ category.incomes|length }}</h4>
+                            <small class="text-muted">Transaction{{ category.incomes|length > 1 ? 's' : '' }}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background: rgba(40, 167, 69, 0.1);">
+                            {% set totalAmount = 0 %}
+                            {% for income in category.incomes %}
+                                {% set totalAmount = totalAmount + income.amount %}
+                            {% endfor %}
+                            <h4 class="text-success mb-1">{{ totalAmount|number_format(0, ',', ' ') }}€</h4>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background: rgba(40, 167, 69, 0.1);">
+                            {% set avgAmount = category.incomes|length > 0 ? (totalAmount / category.incomes|length) : 0 %}
+                            <h4 class="text-success mb-1">{{ avgAmount|number_format(0, ',', ' ') }}€</h4>
+                            <small class="text-muted">Moyenne</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background: rgba(220, 53, 69, 0.1);">
+                            <h4 class="text-danger mb-1">{{ category.expenses|length }}</h4>
+                            <small class="text-muted">Transaction{{ category.expenses|length > 1 ? 's' : '' }}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background: rgba(220, 53, 69, 0.1);">
+                            {% set totalAmount = 0 %}
+                            {% for expense in category.expenses %}
+                                {% set totalAmount = totalAmount + expense.amount %}
+                            {% endfor %}
+                            <h4 class="text-danger mb-1">{{ totalAmount|number_format(0, ',', ' ') }}€</h4>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background: rgba(220, 53, 69, 0.1);">
+                            {% set avgAmount = category.expenses|length > 0 ? (totalAmount / category.expenses|length) : 0 %}
+                            <h4 class="text-danger mb-1">{{ avgAmount|number_format(0, ',', ' ') }}€</h4>
+                            <small class="text-muted">Moyenne</small>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal de suppression -->
+{% if category.incomes|length == 0 and category.expenses|length == 0 %}
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                    Supprimer la catégorie
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer la catégorie <strong>"{{ category.name }}"</strong> ?</p>
+                <div class="alert" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); border-radius: 12px;">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Cette action est irréversible.
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
+                    Annuler
+                </button>
+                <form method="post" action="{{ path('app_category_delete', {id: category.id}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                    <button class="btn btn-danger" style="border-radius: 12px;">
+                        <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Mise à jour des suggestions selon le type sélectionné
-    const typeSelect = document.getElementById('category_type');
-    const nameInput = document.getElementById('category_name');
-    const datalist = document.getElementById('category-suggestions');
+    // Animation au survol des champs de formulaire
+    document.querySelectorAll('.form-control-modern').forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
     
-    if (typeSelect && nameInput && datalist) {
-        typeSelect.addEventListener('change', function() {
-            const isIncome = this.value === 'INCOME';
-            datalist.innerHTML = '';
-            
-            const suggestions = isIncome 
-                ? ['Salaire', 'Freelance', 'Investissements', 'Revenus locatifs', 'Primes', 'Autres revenus']
-                : ['Alimentation', 'Transport', 'Logement', 'Santé', 'Loisirs', 'Vêtements', 'Éducation', 'Utilities', 'Assurances', 'Autres dépenses'];
-            
-            suggestions.forEach(suggestion => {
-                const option = document.createElement('option');
-                option.value = suggestion;
-                datalist.appendChild(option);
-            });
+    // Animation pour le bouton de suppression
+    const deleteBtn = document.querySelector('[data-bs-toggle="modal"]');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 5px 15px rgba(220, 53, 69, 0.3)';
+        });
+        
+        deleteBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
         });
     }
 });

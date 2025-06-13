@@ -1,587 +1,176 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Périodes - Budget Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --info-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --bg-color: #f8f9fc;
-        }
+{% extends 'base_modern.html.twig' %}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-color);
-            color: #2c3e50;
-            margin: 0;
-            padding: 0;
-        }
+{% block title %}Périodes - Budget Manager{% endblock %}
 
-        .modern-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
+{% block header %}
+<div class="page-header">
+    <h1 class="page-title">Mes Périodes 📅</h1>
+    <p class="page-subtitle">Gérer vos périodes budgétaires pour un suivi optimal</p>
+    <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ path('app_period_new') }}" class="btn-modern">
+            <i class="bi bi-plus-circle"></i>Nouvelle période
+        </a>
+        <a href="{{ path('app_dashboard') }}" class="btn-modern btn-info-modern">
+            <i class="bi bi-graph-up"></i>Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
 
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #2c3e50;
-            text-decoration: none;
-        }
+{% block body %}
+<div class="modern-card">
+    <div class="card-header-modern">
+        <h3 class="card-title-modern">
+            <i class="bi bi-calendar3 me-2"></i>Liste des périodes
+        </h3>
+        <span class="badge-modern" style="background: var(--info-gradient); color: white;">
+            {{ periods|length }} période{{ periods|length > 1 ? 's' : '' }}
+        </span>
+    </div>
 
-        .nav-brand:hover {
-            color: #667eea;
-        }
+    {% if periods|length > 0 %}
+        <div class="table-modern">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-tag me-2"></i>Nom</th>
+                        <th><i class="bi bi-calendar-range me-2"></i>Période</th>
+                        <th><i class="bi bi-arrow-up-circle text-success me-2"></i>Revenus</th>
+                        <th><i class="bi bi-arrow-down-circle text-danger me-2"></i>Dépenses</th>
+                        <th><i class="bi bi-wallet text-info me-2"></i>Solde</th>
+                        <th><i class="bi bi-gear me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for period in periods %}
+                    <tr>
+                        <td>
+                            <strong>{{ period.name }}</strong>
+                        </td>
+                        <td>
+                            <span class="text-muted">
+                                {{ period.startDate|date('d/m/Y') }} → {{ period.endDate|date('d/m/Y') }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-bold text-success">
+                                +{{ period.totalIncome|number_format(0, ',', ' ') }}€
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-bold text-danger">
+                                -{{ period.totalExpenses|number_format(0, ',', ' ') }}€
+                            </span>
+                        </td>
+                        <td>
+                            {% set balance = period.balance %}
+                            <span class="fw-bold {{ balance >= 0 ? 'text-success' : 'text-danger' }}">
+                                {{ balance >= 0 ? '+' : '' }}{{ balance|number_format(0, ',', ' ') }}€
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_period_show', {id: period.id}) }}" 
+                                   class="btn btn-sm btn-outline-primary" title="Voir">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ path('app_period_edit', {id: period.id}) }}" 
+                                   class="btn btn-sm btn-outline-warning" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-calendar-x display-1 text-muted"></i>
+            </div>
+            <h4 class="text-muted mb-3">Aucune période créée</h4>
+            <p class="text-muted mb-4">Commencez par créer votre première période budgétaire pour organiser vos finances.</p>
+            <a href="{{ path('app_period_new') }}" class="btn-modern">
+                <i class="bi bi-plus-circle"></i>Créer ma première période
+            </a>
+        </div>
+    {% endif %}
+</div>
 
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-gradient);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: #6c757d;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .nav-link.active {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .page-container {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 24px;
-            padding: 3rem;
-            color: white;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float-bg 10s ease-in-out infinite;
-        }
-
-        @keyframes float-bg {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-30px, -30px); }
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        .page-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        .header-actions {
-            position: relative;
-            z-index: 10;
-        }
-
-        .btn-modern {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-modern:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .periods-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .period-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .period-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-            border-radius: 20px 20px 0 0;
-        }
-
-        .period-card.current::before {
-            background: var(--success-gradient);
-        }
-
-        .period-card.finished::before {
-            background: var(--warning-gradient);
-        }
-
-        .period-card.upcoming::before {
-            background: var(--info-gradient);
-        }
-
-        .period-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .period-header {
-            display: flex;
-            justify-content: between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-        }
-
-        .period-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .period-dates {
-            color: #6c757d;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-current {
-            background: rgba(79, 172, 254, 0.1);
-            color: #4facfe;
-        }
-
-        .status-finished {
-            background: rgba(240, 147, 251, 0.1);
-            color: #f093fb;
-        }
-
-        .status-upcoming {
-            background: rgba(67, 233, 123, 0.1);
-            color: #43e97b;
-        }
-
-        .period-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            border-radius: 12px;
-            background: #f8f9fa;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-value.income {
-            color: #28a745;
-        }
-
-        .stat-value.expense {
-            color: #dc3545;
-        }
-
-        .stat-value.balance {
-            color: #6c757d;
-        }
-
-        .stat-value.balance.positive {
-            color: #28a745;
-        }
-
-        .stat-value.balance.negative {
-            color: #dc3545;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .period-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 0.75rem;
-            border-radius: 10px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-view {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .btn-edit {
-            background: rgba(108, 117, 125, 0.1);
-            color: #6c757d;
-        }
-
-        .btn-delete {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            color: #e9ecef;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        .empty-description {
-            color: #adb5bd;
-            margin-bottom: 2rem;
-        }
-
-        .btn-primary-modern {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-modern:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-            color: white;
-        }
-
-        /* Modal styles */
-        .modal-content {
-            border-radius: 20px;
-            border: none;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .modal-header {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .page-container {
-                padding: 1rem;
-            }
-
-            .page-header {
-                padding: 2rem;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .periods-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-links {
-                display: none;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation moderne -->
-    <nav class="modern-nav">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <a href="{{ path('app_dashboard') }}" class="nav-brand">
-                    <div class="brand-icon">
-                        <i class="bi bi-wallet2"></i>
+{% if periods|length > 0 %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h5 class="card-title-modern">
+                    <i class="bi bi-bar-chart me-2"></i>Statistiques globales
+                </h5>
+            </div>
+            {% set totalRevenues = 0 %}
+            {% set totalDepenses = 0 %}
+            {% for period in periods %}
+                {% set totalRevenues = totalRevenues + period.totalIncome %}
+                {% set totalDepenses = totalDepenses + period.totalExpenses %}
+            {% endfor %}
+            
+            <div class="row text-center">
+                <div class="col-12 mb-3">
+                    <div class="p-3 rounded" style="background: rgba(79, 172, 254, 0.1);">
+                        <h6 class="text-success mb-1">Total Revenus</h6>
+                        <h4 class="text-success mb-0">+{{ totalRevenues|number_format(0, ',', ' ') }}€</h4>
                     </div>
-                    Budget Manager
-                </a>
-
-                <div class="nav-links">
-                    <a href="{{ path('app_dashboard') }}" class="nav-link">Dashboard</a>
-                    <a href="{{ path('app_period_index') }}" class="nav-link active">Périodes</a>
-                    <a href="{{ path('app_income_index') }}" class="nav-link">Revenus</a>
-                    <a href="{{ path('app_expense_index') }}" class="nav-link">Dépenses</a>
-                    <a href="{{ path('app_category_index') }}" class="nav-link">Catégories</a>
                 </div>
-
-                <div class="user-avatar" title="{{ app.user.email }}">
-                    {{ app.user.email|first|upper }}
+                <div class="col-12 mb-3">
+                    <div class="p-3 rounded" style="background: rgba(240, 147, 251, 0.1);">
+                        <h6 class="text-danger mb-1">Total Dépenses</h6>
+                        <h4 class="text-danger mb-0">-{{ totalDepenses|number_format(0, ',', ' ') }}€</h4>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3 rounded" style="background: rgba(67, 233, 123, 0.1);">
+                        <h6 class="text-info mb-1">Solde Global</h6>
+                        {% set soldeGlobal = totalRevenues - totalDepenses %}
+                        <h4 class="{{ soldeGlobal >= 0 ? 'text-success' : 'text-danger' }} mb-0">
+                            {{ soldeGlobal >= 0 ? '+' : '' }}{{ soldeGlobal|number_format(0, ',', ' ') }}€
+                        </h4>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
-
-    <!-- Container principal -->
-    <div class="page-container">
-        <!-- En-tête de la page -->
-        <div class="page-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="page-title">
-                        <i class="bi bi-calendar3 me-3"></i>Mes Périodes
-                    </h1>
-                    <p class="page-subtitle">Organisez votre budget par périodes temporelles</p>
-                </div>
-                <div class="header-actions">
-                    <a href="{{ path('app_period_new') }}" class="btn-modern">
-                        <i class="bi bi-plus-circle"></i>
-                        Nouvelle période
-                    </a>
-                </div>
+    </div>
+    <div class="col-md-8">
+        <div class="modern-card">
+            <div class="card-header-modern">
+                <h5 class="card-title-modern">
+                    <i class="bi bi-clock-history me-2"></i>Activité récente
+                </h5>
             </div>
-        </div>
-
-        <!-- Contenu principal -->
-        {% if periods|length > 0 %}
-            <div class="periods-grid">
-                {% for period in periods %}
-                <div class="period-card 
-                    {% set today = 'now'|date %}
-                    {% set startDate = period.startDate|date %}
-                    {% set endDate = period.endDate|date %}
-                    {% if startDate <= today and endDate >= today %}current
-                    {% elseif endDate < today %}finished
-                    {% else %}upcoming{% endif %}">
-                    
-                    <div class="period-header">
-                        <div>
-                            <h3 class="period-name">{{ period.name }}</h3>
-                            <div class="period-dates">
-                                <i class="bi bi-calendar-range"></i>
-                                {{ period.startDate|date('d/m/Y') }} - {{ period.endDate|date('d/m/Y') }}
-                            </div>
-                        </div>
-                        <div class="status-badge 
-                            {% if startDate <= today and endDate >= today %}status-current
-                            {% elseif endDate < today %}status-finished
-                            {% else %}status-upcoming{% endif %}">
-                            {% if startDate <= today and endDate >= today %}Actuelle
-                            {% elseif endDate < today %}Terminée
-                            {% else %}À venir{% endif %}
+            <div class="timeline">
+                {% for period in periods|slice(0, 5) %}
+                <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: #f8f9fa;">
+                    <div class="me-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: var(--primary-gradient); color: white;">
+                            <i class="bi bi-calendar3"></i>
                         </div>
                     </div>
-
-                    <div class="period-stats">
-                        <div class="stat-item">
-                            <div class="stat-value income">{{ period.totalIncome|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Revenus</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value expense">{{ period.totalExpenses|number_format(0, ',', ' ') }}€</div>
-                            <div class="stat-label">Dépenses</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value balance {{ period.balance >= 0 ? 'positive' : 'negative' }}">
-                                {{ period.balance|number_format(0, ',', ' ') }}€
-                            </div>
-                            <div class="stat-label">Solde</div>
-                        </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">{{ period.name }}</h6>
+                        <small class="text-muted">{{ period.startDate|date('d/m/Y') }} - {{ period.endDate|date('d/m/Y') }}</small>
                     </div>
-
-                    <div class="period-actions">
-                        <a href="{{ path('app_period_show', {id: period.id}) }}" class="btn-action btn-view">
-                            <i class="bi bi-eye"></i> Voir
-                        </a>
-                        <a href="{{ path('app_period_edit', {id: period.id}) }}" class="btn-action btn-edit">
-                            <i class="bi bi-pencil"></i> Modifier
-                        </a>
-                        <button type="button" class="btn-action btn-delete" 
-                                data-bs-toggle="modal" data-bs-target="#deleteModal{{ period.id }}">
-                            <i class="bi bi-trash"></i> Supprimer
-                        </button>
-                    </div>
-                </div>
-
-                {# Modal de suppression #}
-                <div class="modal fade" id="deleteModal{{ period.id }}" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Supprimer la période</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Êtes-vous sûr de vouloir supprimer la période <strong>{{ period.name }}</strong> ?</p>
-                                {% if period.incomes|length > 0 or period.expenses|length > 0 %}
-                                    <div class="alert alert-warning">
-                                        <i class="bi bi-exclamation-triangle"></i>
-                                        Cette période contient {{ period.incomes|length }} revenu(s) et {{ period.expenses|length }} dépense(s) qui seront également supprimés.
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <form method="post" action="{{ path('app_period_delete', {id: period.id}) }}" style="display: inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ period.id) }}">
-                                    <button class="btn btn-danger">
-                                        <i class="bi bi-trash"></i> Supprimer
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                    <div class="text-end">
+                        {% set balance = period.balance %}
+                        <span class="fw-bold {{ balance >= 0 ? 'text-success' : 'text-danger' }}">
+                            {{ balance >= 0 ? '+' : '' }}{{ balance|number_format(0, ',', ' ') }}€
+                        </span>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-        {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="bi bi-calendar-x"></i>
-                </div>
-                <h3 class="empty-title">Aucune période créée</h3>
-                <p class="empty-description">Commencez par créer votre première période de budget pour organiser vos finances.</p>
-                <a href="{{ path('app_period_new') }}" class="btn-primary-modern">
-                    <i class="bi bi-plus-circle"></i>
-                    Créer ma première période
-                </a>
-            </div>
-        {% endif %}
+        </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> 
+</div>
+{% endif %}
+{% endblock %} 
